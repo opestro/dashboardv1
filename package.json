@@ -1,0 +1,26 @@
+{
+  "name": "dashboard-by-heazlly",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "db:serve": "json-server --watch dbjson/clients.json --port=3001",
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/pwa": "^3.3.5",
+    "core-js": "^3.25.3",
+    "nuxt": "^2.15.8",
+    "vue": "^2.7.10",
+    "vue-server-renderer": "^2.7.10",
+    "vue-template-compiler": "^2.7.10",
+    "vuetify": "^2.6.10"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.3",
+    "json-server": "^0.17.1"
+  }
+}

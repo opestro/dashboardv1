@@ -1,0 +1,26 @@
+{
+    "clients": [
+      {
+        "id": 0,
+        "Full name": "Adem Julian",
+        "Address": "Bir khadem",
+        "Wilaya": "Alger",
+        "Phone number": "0778191078",
+        "Items": "Black oversize - M",
+        "Shiping": "500",
+        "Total": "7400",
+        "Status": "Confirmed"
+      },
+      {
+        "id": 1,
+        "Full name": "Adem Julian",
+        "Address": "Bir khadem",
+        "Wilaya": "Alger",
+        "Phone number": "0778191078",
+        "Items": "Black oversize - M",
+        "Shiping": "500",
+        "Total": "7400",
+        "Status": "Confirmed"
+      }
+    ]
+  }
