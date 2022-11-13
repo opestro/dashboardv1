@@ -1,26 +1,38 @@
 {
-    "clients": [
-      {
-        "id": 0,
-        "Full name": "Adem Julian",
-        "Address": "Bir khadem",
-        "Wilaya": "Alger",
-        "Phone number": "0778191078",
-        "Items": "Black oversize - M",
-        "Shiping": "500",
-        "Total": "7400",
-        "Status": "Confirmed"
-      },
-      {
-        "id": 1,
-        "Full name": "Adem Julian",
-        "Address": "Bir khadem",
-        "Wilaya": "Alger",
-        "Phone number": "0778191078",
-        "Items": "Black oversize - M",
-        "Shiping": "500",
-        "Total": "7400",
-        "Status": "Confirmed"
-      }
-    ]
-  }
+  "clients": [
+    {
+      "id": 0,
+      "UserID": "225",
+      "FullName": "Adem Julian",
+      "Address": "Bir khadem",
+      "Wilaya": "Alger",
+      "PhoneNumber": "0778191078",
+      "Items": "Black oversize - M",
+      "Shiping": "500",
+      "Total": "7400",
+      "Status": "Confirmed"
+    },
+    {
+      "UserID": "225",
+      "FullName": "undefined",
+      "Address": "undefined",
+      "Wilaya": "undefined",
+      "PhoneNumber": "undefined",
+      "Items": "undefined",
+      "Shiping": "undefined",
+      "Total": "undefined",
+      "Status": "Processing",
+      "id": 1
+    }
+  ],
+  "Users": [
+    {
+      "id": 0,
+      "FullName": "Adem Julian",
+      "EmailAddress": "Adem Julian",
+      "TotalOrders": 2,
+      "Total": "7400",
+      "ID": "225"
+    }
+  ]
+}
