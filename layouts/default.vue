@@ -1,7 +1,7 @@
 <template>
   <v-app  >
     <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app
-      class="rounded-xl rounded-l-0">
+      class="rounded-br-xl ">
       <v-card class="ma-2 rounded-xl">
         <v-row class="ma-1">
           <v-col cols="8" class="py-3">
@@ -31,7 +31,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app class="rounded-xl rounded-t-0 ">
+    <v-app-bar :clipped-left="clipped" fixed app class="rounded-br-xl  ">
      
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -80,7 +80,7 @@ export default {
           to: '/AddUser'
         }
       ],
-      title: 'Vuetify.js',
+      title: 'Dashboard heazlly',
       
     }
   },

@@ -4,10 +4,10 @@
             <v-card-title>Data Table</v-card-title>
 
             <div class="my-5  mx-4">
-                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-lg white--text" color="blue">Add new
+                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text" color="blue">Add new
                     client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-lg ">Add Client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-lg white--text" color="red">Close
+                <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-xl ">Add Client</v-btn>
+                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl white--text" color="red">Close
                 </v-btn>
             </div>
 

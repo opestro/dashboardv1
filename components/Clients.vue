@@ -47,7 +47,7 @@
                         <td class="text-caption" >{{ data.Shiping }}</td>
                         <td class="text-caption" >{{ data.Total }}</td>
                         <td class="text-caption" >{{ data.Status }}</td>
-                        <td class="text-caption" ><v-btn @click="deleteClient(data)" class="red white--text rounded-lg">delete</v-btn></td>
+                        <td class="text-caption" ><v-btn @click="deleteClient(data)" class="red white--text rounded-xl">delete</v-btn></td>
                     </tr>
                 </tbody>
             </template>
