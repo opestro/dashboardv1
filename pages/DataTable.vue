@@ -1,15 +1,23 @@
 <template>
     <div>
-        <v-card class="d-flex justify-space-between rounded-xl" elevation="0">
-            <v-card-title>Data Table</v-card-title>
+        <v-card class="d-xs-block d-sm-flex flex-wrap align-xs-content-center align-center justify-xs-center justify-sm-space-between rounded-xl"  elevation="0" >
+            <v-col cols="6" >
+                <v-card-title>Data Table</v-card-title>
+            </v-col>
+            <v-col class=" d-flex justify-xs-center justify-sm-end " cols="6" >
+                
+                    <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text" color="blue">Add
+                        new
+                        client</v-btn>
+                    <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-xl ">Add Client</v-btn>
+                    <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl white--text" color="red">Close
+                    </v-btn>
+              
 
-            <div class="my-5  mx-4">
-                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text" color="blue">Add new
-                    client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-xl ">Add Client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl white--text" color="red">Close
-                </v-btn>
-            </div>
+            </v-col>
+
+
+
 
         </v-card>
         <v-card class="my-2 green d-flex justify-center rounded-xl white--text" elevation="5" v-if="Done">
@@ -40,8 +48,8 @@
 
         </v-card>
         <v-spacer class="py-2"></v-spacer>
-        <v-card class="rounded-xl"  elevation="5">
-            <clients  v-if="ShowClient"></clients>
+        <v-card class="rounded-xl" elevation="5">
+            <clients v-if="ShowClient"></clients>
         </v-card>
     </div>
 </template>
