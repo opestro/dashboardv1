@@ -73,7 +73,7 @@ export default {
             this.Done = false
         },
         AddNewClient() {
-            this.$axios.post('http://localhost:3001/clients',
+            this.$axios.post('https://dashv1.swellty.com/clients',
                 {
                     "UserID": "225",
                     "FullName": this.data.Full_Name + "",
