@@ -63,13 +63,13 @@ export default {
     },
     methods: {
         deleteClient(data){
-            this.$axios.delete('https://dashv1.swellty.com/clients'+data.id).then(()=>{
+            this.$axios.delete('/clients'+data.id).then(()=>{
                 alert('Your client has been deleted')
             })
         }
     },
     beforeMount(){
-        this.$axios.get('https://dashv1.swellty.com/clients').then((data)=>{
+        this.$axios.get('/clients').then((data)=>{
             console.log(data)
             this.clients = data.data
         })
