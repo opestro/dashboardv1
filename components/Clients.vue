@@ -38,7 +38,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="data in clients" :key="data">
-                        <td class="text-caption" >{{ data.id }}</td>
+                        <td class="text-caption" >{{ data.$id }}</td>
                         <td class="text-caption" >{{ data.FullName }}</td>
                         <td class="text-caption" >{{ data.Address }}</td>
                         <td class="text-caption" >{{ data.Wilaya }}</td>
@@ -55,6 +55,7 @@
     </div>
 </template>
 <script>
+import { db } from "../appwrite.js"
 export default {
     data() {
         return {
@@ -69,9 +70,9 @@ export default {
         }
     },
     beforeMount(){
-        this.$axios.get('/clients').then((data)=>{
+        db.listDocuments('dash1','orders').then((data)=>{
             console.log(data)
-            this.clients = data.data
+            this.clients = data.documents
         })
     }
 }

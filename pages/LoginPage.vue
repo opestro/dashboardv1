@@ -15,7 +15,8 @@
 
 </template>
 <script>
-import account from "../appwrite.js";
+
+import {account} from "../appwrite";
 export default {
     data() {
         return {
@@ -25,9 +26,9 @@ export default {
     },
     methods : {
         Login() {
-            account.getSessions('http://192.168.1.8/v1/account/sessions').then(()=> {
-            console.log('Done!')
-        }).catch((err)=> {alert(err)})
+            account.createEmailSession(this.email , this.pass)
+            .then((data)=>{console.log('Done' + data)})
+            .catch((err)=> {alert(err)})
     }
     }
 }

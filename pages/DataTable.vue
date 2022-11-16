@@ -52,12 +52,11 @@
     </div>
 </template>
 <script>
-import Clients from '../components/Clients.vue'
+import Clients from '../components/Clients.vue';
+import { ID, account, db, Permission, Role } from "../appwrite.js";
 export default {
     components: { Clients },
     name: 'DataTable',
-
-    name: 'D{ataTable',
 
     data() {
         return {
@@ -74,9 +73,8 @@ export default {
             this.Done = false
         },
         AddNewClient() {
-            this.$axios.post('/clients',
+            db.createDocument('dash1', 'orders', "unique()",
                 {
-                    "UserID": "225",
                     "FullName": this.data.Full_Name + "",
                     "Address": this.data.Address + "",
                     "Wilaya": this.data.Wilaya + "",
@@ -85,7 +83,7 @@ export default {
                     "Shiping": this.data.Shiping + "",
                     "Total": this.data.Total + "",
                     "Status": "Processing" + ""
-                })
+                }).then((data) => {console.log(data)}).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
             this.ShowClient = false
