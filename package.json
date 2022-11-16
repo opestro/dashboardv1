@@ -13,6 +13,10 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
+<<<<<<< HEAD
+=======
+    "appwrite": "^10.1.0",
+>>>>>>> 5b4ac21 (test)
     "core-js": "^3.25.3",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
@@ -24,6 +28,9 @@
     "@nuxtjs/vuetify": "^1.12.3",
     "json-server": "^0.17.1",
     "push-dir": "^0.4.1"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5b4ac21 (test)
   }
 }

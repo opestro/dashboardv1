@@ -12,6 +12,7 @@
                     <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-xl ">Add Client</v-btn>
                     <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl white--text" color="red">Close
                     </v-btn>
+<<<<<<< HEAD
               
 
             </v-col>
@@ -19,6 +20,9 @@
 
 
 
+=======
+            </v-col>
+>>>>>>> 5b4ac21 (test)
         </v-card>
         <v-card class="my-2 green d-flex justify-center rounded-xl white--text" elevation="5" v-if="Done">
             <v-card-title class="">
@@ -43,28 +47,43 @@
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
+<<<<<<< HEAD
 
             </v-card-subtitle>
 
+=======
+            </v-card-subtitle>
+>>>>>>> 5b4ac21 (test)
         </v-card>
         <v-spacer class="py-2"></v-spacer>
         <v-card class="rounded-xl" elevation="5">
             <clients v-if="ShowClient"></clients>
         </v-card>
+<<<<<<< HEAD
+=======
+   
+>>>>>>> 5b4ac21 (test)
     </div>
 </template>
 <script>
 import Clients from '../components/Clients.vue'
 export default {
     components: { Clients },
+<<<<<<< HEAD
     name: 'DataTable',
+=======
+    name: 'D{ataTable',
+>>>>>>> 5b4ac21 (test)
     data() {
         return {
             AddNew: false,
             data: [],
             Done: false,
             ShowClient: true,
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5b4ac21 (test)
         }
     },
     methods: {
