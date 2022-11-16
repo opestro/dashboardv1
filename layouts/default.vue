@@ -78,6 +78,14 @@ export default {
           icon: 'mdi-account-plus',
           title: 'Add User',
           to: '/AddUser'
+<<<<<<< HEAD
+=======
+        },
+        {
+          icon: 'mdi-account-plus',
+          title: 'Login Page',
+          to: '/LoginPage'
+>>>>>>> 5b4ac21 (test)
         }
       ],
       title: 'Dashboard heazlly',
