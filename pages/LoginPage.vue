@@ -15,6 +15,7 @@
 
 </template>
 <script>
+import account from "../appwrite.js";
 export default {
     data() {
         return {
@@ -24,7 +25,7 @@ export default {
     },
     methods : {
         Login() {
-        this.$axios.post('').then(()=> {
+            account.getSessions('http://192.168.1.8/v1/account/sessions').then(()=> {
             console.log('Done!')
         }).catch((err)=> {alert(err)})
     }
