@@ -9,4 +9,4 @@ client
 const account = new Account(client);
 
 
-export {account};
+export {account}
