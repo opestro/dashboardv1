@@ -18,17 +18,31 @@
             </v-col>
 
         </v-card>
-        <v-card v-show="AddNew" class="my-2 pa-2 rounded-xl " elevation="5" outlined>
+        <v-card class="my-2 pa-2 rounded-xl " elevation="5" outlined>
             <v-card-title>
                 Add New Client
             </v-card-title>
+            <v-spacer></v-spacer>
             <v-card-subtitle class="d-flex">
-
-                <v-text-field class="text-caption" label="Full name">Full Name</v-text-field>
-                <v-text-field class="text-caption" label="Address">Address</v-text-field>
-                <div v-for="(field, counter) in fields" :key="counter" class="d-flex algin-center text-centre">
-                    <v-chip class="mx-2 my-1" color="red" outlined @click="deleteField(counter)">x</v-chip>
+                <div >
+                    <v-btn type="button"
+                        class="flex justify-start ml-2 rounded-md border px-3 py-2 bg-pink-600 text-white"
+                        @click="addMore()">
+                        Add More
+                    </v-btn>
+                    <div v-for="(course, index) in courses" :key="index">
+                        <div class="d-flex">
+                            
+                            <v-text-field v-model="course.courseName" placeholder="enter you course name"
+                                class="w-full py-2 border border-indigo-500 rounded" />
+                            <v-btn type="button" class="ml-2 rounded-md border px-3 py-2 bg-red-600 text-white"
+                                @click="remove(index)" v-show="index != 0">
+                                Remove
+                            </v-btn>
+                        </div>
+                    </div>
                 </div>
+
 
 
             </v-card-subtitle>
@@ -40,25 +54,26 @@
 export default {
     data() {
         return {
-            fields: [
+            courses: [
                 {
-                    grad: '',
-                    spiciality: ''
-                }
+                    courseName: "",
+                },
             ],
             counter: []
         }
     },
     methods: {
-        addField() {
-            this.fields.push({
-                grad: '',
-                spiciality:''
-      })
+
+        addMore() {
+            this.courses.push({
+                courseName: "",
+            });
         },
-        deleteField(counter) {
-            this.fields.splice(counter, 1)
+        remove(index) {
+            this.courses.splice(index, 1);
         },
+
+
     },
 }
 </script>
