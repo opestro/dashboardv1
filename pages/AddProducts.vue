@@ -80,6 +80,7 @@ export default {
         remove(index) {
             this.products.splice(index, 1);
         },
+        // function to create new product
         CreateProduct() {
             const products = this.products
             // loop to send each product to the database and separate the products with their unique size and colour
