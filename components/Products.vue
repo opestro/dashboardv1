@@ -8,28 +8,22 @@
                             ID
                         </th>
                         <th class="text-left">
-                            FullName
+                            Title
                         </th>
                         <th class="text-left">
-                            Address
+                            Description
                         </th>
                         <th class="text-left">
-                            Wilaya
+                            Size
                         </th>
                         <th class="text-left">
-                            PhoneNumber
+                            Colour
                         </th>
                         <th class="text-left">
-                            Items
+                            Stock
                         </th>
                         <th class="text-left">
-                            Shiping
-                        </th>
-                        <th class="text-left">
-                            Total
-                        </th>
-                        <th class="text-left">
-                            Status
+                            Price
                         </th>
                         <th class="text-left">
                             Action
@@ -37,16 +31,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="data in clients" :key="data">
+                    <tr v-for="data in Products" :key="data">
                         <td class="text-caption" >{{ data.$id }}</td>
-                        <td class="text-caption" >{{ data.FullName }}</td>
-                        <td class="text-caption" >{{ data.Address }}</td>
-                        <td class="text-caption" >{{ data.Wilaya }}</td>
-                        <td class="text-caption" >{{ data.PhoneNumber }}</td>
-                        <td class="text-caption" >{{ data.Items }}</td>
-                        <td class="text-caption" >{{ data.Shiping }} DA</td>
-                        <td class="text-caption" >{{ data.Total }} DA</td>
-                        <td class="text-caption" >{{ data.Status }}</td>
+                        <td class="text-caption" >{{ data.Title }}</td>
+                        <td class="text-caption" >{{ data.Desc }}</td>
+                        <td class="text-caption" >{{ data.Size }}</td>
+                        <td class="text-caption" >{{ data.Colours }}</td>
+                        <td class="text-caption" >{{ data.Price }} DA</td>
+                        <td class="text-caption" >{{ data.Ref }} </td>
                         <td class="text-caption" ><v-btn @click="deleteClient(data)" outlined class="red white--text rounded-xl">delete</v-btn></td>
                     </tr>
                 </tbody>
@@ -59,20 +51,20 @@ import { db } from "../appwrite.js"
 export default {
     data() {
         return {
-            clients: [],
+            Products: [],
         }
     },
     methods: {
         deleteClient(data){
-           db.deleteDocument('dash1','orders', data.$id).then(()=>{
+           db.deleteDocument('dash1','products', data.$id).then(()=>{
                 alert('Your client has been deleted')
             })
         }
     },
     beforeMount(){
-        db.listDocuments('dash1','orders').then((data)=>{
+        db.listDocuments('dash1','products').then((data)=>{
             console.log(data)
-            this.clients = data.documents
+            this.Products = data.documents
         })
     }
 }

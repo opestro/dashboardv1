@@ -6,15 +6,12 @@
 
 
         </v-card>
-        <v-card class="my-2 pa-2 rounded-xl " elevation="5" outlined>
+        <v-card class="my-2 pa-2 rounded-xl " elevation="0" >
             <v-card-title>
                 Add New Product
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-btn type="button" class="d-flex justify-end ml-2 rounded-md border px-3 py-2 bg-pink-600 text-white"
-                @click="addMore()">
-                Add Variation
-            </v-btn>
+
             <v-card-subtitle class="d-flex justify-center">
                 <div class="">
                     <v-row>
@@ -25,15 +22,20 @@
                             <div v-for="(product, index) in products" :key="index" class="d-flex">
                                 <v-text-field class="mr-3" v-model="product.size" placeholder="Size"></v-text-field>
                                 <v-text-field class="mr-3" v-model="product.colour" placeholder="Colour"></v-text-field>
-                               
+
                                 <v-text-field class="mr-3" v-model="product.ref" placeholder="Ref"></v-text-field>
-                                <v-btn type="button" class="ml-2 rounded-md border px-3 py-2 bg-red-600 text-white"
-                                    @click="remove(index)" v-show="index != 0">
-                                    Remove
+                                <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)"
+                                    v-show="index != 0">
+                                    X
+                                </v-chip>
+                            </div>
+                            <div class="d-flex justify-space-between align-centre">
+                                <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0" @click="addMore()">
+                                    Add Variation
+                                </v-btn>
+                                <v-btn class="mr-2 rounded-xl white--text green px-3 py-2 " elevation="0" outlined @click="CreateProduct()">Create Product
                                 </v-btn>
                             </div>
-                            
-                            <v-btn @click="CreateProduct(products)">Create Product</v-btn>
                         </div>
                     </v-row>
                 </div>
@@ -43,11 +45,14 @@
             </v-card-subtitle>
 
         </v-card>
+        <Products></Products>
     </v-container>
 </template>
 <script>
+import Products from '../components/Products.vue';
 import { ID, account, db, Permission, Role } from "../appwrite.js";
 export default {
+    component: { Products },
     data() {
         return {
             products: [
@@ -78,25 +83,25 @@ export default {
             const products = this.products
             for (let i = 0; i < products.length; i++) {
                 db.createDocument('dash1', 'products', "unique()",
-                {
-                    "Title": products.title,
-                    "Desc": products.description,
-                    "Size": products[i].size,
-                    "Colours": products[i].colour,
-                    "Price": products.price,
-                    "Ref": products[i].ref,
-                }).then((data) => {console.log(data)}).catch((err) => { alert(err) })
-                
+                    {
+                        "Title": products.title,
+                        "Desc": products.description,
+                        "Size": products[i].size,
+                        "Colours": products[i].colour,
+                        "Price": products.price,
+                        "Ref": products[i].ref,
+                    }).then((data) => { console.log(data) }).catch((err) => { alert(err) })
+
             }
-         /*   db.createDocument('dash1', 'products', "unique()",
-                {
-                    "Title": this.products.title,
-                    "Desc": this.products.description,
-                    "Size": this.products.size,
-                    "Colours": this.products.colour,
-                    "Price": this.products.price,
-                    "Ref": this.products.ref,
-                }).then((data) => {console.log(data)}).catch((err) => { alert(err) })*/
+            /*   db.createDocument('dash1', 'products', "unique()",
+                   {
+                       "Title": this.products.title,
+                       "Desc": this.products.description,
+                       "Size": this.products.size,
+                       "Colours": this.products.colour,
+                       "Price": this.products.price,
+                       "Ref": this.products.ref,
+                   }).then((data) => {console.log(data)}).catch((err) => { alert(err) })*/
             console.log(this.products)
         },
 

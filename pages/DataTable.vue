@@ -1,20 +1,24 @@
 <template>
     <div>
-        <v-card class="d-xs-block d-sm-flex flex-wrap align-xs-content-center align-center justify-xs-center justify-sm-space-between rounded-xl"  elevation="0" >
-            <v-col cols="6" >
+        <v-card
+            class="d-xs-block d-sm-flex flex-wrap align-xs-content-center align-center justify-xs-center justify-sm-space-between rounded-xl"
+            elevation="0">
+            <v-col cols="6">
                 <v-card-title>Data Table</v-card-title>
             </v-col>
-            <v-col class=" d-flex justify-xs-center justify-sm-end " cols="6" >
-                
-                    <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text" color="blue">Add
-                        new
-                        client</v-btn>
-                    <v-btn v-show="AddNew" @click="AddNewClient()" class=" rounded-xl ">Add Client</v-btn>
-                    <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl white--text" color="red">Close
-                    </v-btn>
+            <v-col class=" d-flex justify-xs-center justify-sm-end " cols="6">
+
+                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text blue" outlined >
+                    Add
+                    new
+                    client</v-btn>
+                <v-btn v-show="AddNew" @click="AddNewClient()" class="green white--text mx-2 rounded-xl " outlined>Add Client</v-btn>
+                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl red white--text" outlined >
+                    Close
+                </v-btn>
 
             </v-col>
-            
+
         </v-card>
         <v-card class="my-2 green d-flex justify-center rounded-xl white--text" elevation="5" v-if="Done">
             <v-card-title class="">
@@ -83,7 +87,7 @@ export default {
                     "Shiping": this.data.Shiping + "",
                     "Total": this.data.Total + "",
                     "Status": "Processing" + ""
-                }).then((data) => {console.log(data)}).catch((err) => { alert(err) })
+                }).then((data) => { console.log(data) }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
             this.ShowClient = false
