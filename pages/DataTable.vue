@@ -8,12 +8,13 @@
             </v-col>
             <v-col class=" d-flex justify-xs-center justify-sm-end " cols="6">
 
-                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text blue" outlined >
+                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text blue" outlined>
                     Add
                     new
                     client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNewClient()" class="green white--text mx-2 rounded-xl " outlined>Add Client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl red white--text" outlined >
+                <v-btn v-show="AddNew" @click="AddNewClient()" class="green white--text mx-2 rounded-xl " outlined>Add
+                    Client</v-btn>
+                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl red white--text" outlined>
                     Close
                 </v-btn>
 
@@ -39,7 +40,15 @@
                     </v-text-field>
                 </v-col>
                 <v-col cols="6">
-                    <v-text-field class="text-caption" v-model="data.Items" label="Items">Items</v-text-field>
+                    <v-autocomplete :v-model="Item"
+                        :items="Item" v-model="data.Items" outlined dense chips small-chips label="Items" multiple>
+                    </v-autocomplete>
+                    <v-autocomplete :v-model="size"
+                        :items="size" v-model="data.Size" outlined dense chips small-chips label="Size" multiple>
+                    </v-autocomplete>
+                    <v-autocomplete :v-model="colour"
+                        :items="colour" v-model="data.Colour" outlined dense chips small-chips label="Colour" multiple>
+                    </v-autocomplete>
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
@@ -68,6 +77,10 @@ export default {
             data: [],
             Done: false,
             ShowClient: true,
+            Item:[],
+            size: [],
+            colour: [],
+            Price: []
 
         }
     },
@@ -76,6 +89,7 @@ export default {
             this.AddNew = true
             this.Done = false
         },
+        // function to Create a new Order
         AddNewClient() {
             db.createDocument('dash1', 'orders', "unique()",
                 {
@@ -96,6 +110,26 @@ export default {
         },
 
     },
+    beforeMount() {
+      // function to get Documents of Products from the database
+      // still need some work 
+        db.listDocuments('dash1', 'products').then((data) => {
+
+            const prdcts = data.documents
+            for (let i = 0; i < prdcts.length; i++) {
+                this.Item.push( prdcts[i].Title)
+                this.size.push( prdcts[i].Size)
+                this.colour.push( prdcts[i].Colours)
+                this.Price.push( prdcts[i].Price)
+                console.log(prdcts);
+
+
+
+            }
+
+
+        })
+    }
 
 }
 </script>

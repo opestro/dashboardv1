@@ -35,12 +35,14 @@ export default {
         email: '',
     },
     methods: {
+        // function to addMore Users to the database
         AddUser() {
             if (this.pass0 == this.pass) {
                 account.create(ID.unique(), this.email, this.pass, this.name)
                     .then((data) => {
                         console.log(data)
                         const userID = data.$id
+                        // Checking the type of user
                         if (this.type == 'Validator') {
                             db.createDocument('dash1', 'user1', userID, { 'UserType': 'Validator','Username': this.name , 'Email':this.email });
                         } else if (this.type == 'Affiliate') {
@@ -58,6 +60,7 @@ export default {
             }
 
         },
+        // function to get Documents of Users
         GetDoc() {
             db.listDocuments('dash1', 'user1').then((data) => {
                 console.log(data)

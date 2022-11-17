@@ -27,6 +27,7 @@ export default {
         }
     },
     methods : {
+        // function to Login and get session
         Login() {
             account.createEmailSession(this.email , this.pass)
             .then((data)=>{console.log('Done' + data)})

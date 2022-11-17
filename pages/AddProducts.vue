@@ -64,11 +64,11 @@ export default {
                     price: "",
                     ref: "",
                 },
-            ],
-            counter: []
+            ]
         }
     },
     methods: {
+        // function to addMore variations
         addMore() {
             this.products.push({
                 size: "",
@@ -76,11 +76,13 @@ export default {
                 ref: ""
             });
         },
+         // function to remove variations 
         remove(index) {
             this.products.splice(index, 1);
         },
         CreateProduct() {
             const products = this.products
+            // loop to send each product to the database and separate the products with their unique size and colour
             for (let i = 0; i < products.length; i++) {
                 db.createDocument('dash1', 'products', "unique()",
                     {
@@ -91,17 +93,7 @@ export default {
                         "Price": products.price,
                         "Ref": products[i].ref,
                     }).then((data) => { console.log(data) }).catch((err) => { alert(err) })
-
             }
-            /*   db.createDocument('dash1', 'products', "unique()",
-                   {
-                       "Title": this.products.title,
-                       "Desc": this.products.description,
-                       "Size": this.products.size,
-                       "Colours": this.products.colour,
-                       "Price": this.products.price,
-                       "Ref": this.products.ref,
-                   }).then((data) => {console.log(data)}).catch((err) => { alert(err) })*/
             console.log(this.products)
         },
 

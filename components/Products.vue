@@ -55,6 +55,7 @@ export default {
         }
     },
     methods: {
+        // function to delete Product
         deleteClient(data){
            db.deleteDocument('dash1','products', data.$id).then(()=>{
                 alert('Your client has been deleted')
@@ -62,6 +63,7 @@ export default {
         }
     },
     beforeMount(){
+        // function to get Documents of Products
         db.listDocuments('dash1','products').then((data)=>{
             console.log(data)
             this.Products = data.documents

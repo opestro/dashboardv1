@@ -63,6 +63,7 @@ export default {
         }
     },
     methods: {
+        // function to delete order
         deleteClient(data){
            db.deleteDocument('dash1','orders', data.$id).then(()=>{
                 alert('Your client has been deleted')
@@ -70,6 +71,7 @@ export default {
         }
     },
     beforeMount(){
+        // function to get Documents of orders
         db.listDocuments('dash1','orders').then((data)=>{
             console.log(data)
             this.clients = data.documents
