@@ -37,7 +37,7 @@
         <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
      
-        <v-icon @click="darkMode">mdi-brightness-4</v-icon>
+        <v-icon @click="darkMode">mdi-brightness-4 LOl</v-icon>
       
 
 
@@ -73,6 +73,11 @@ export default {
           icon: 'mdi-account-group',
           title: 'Data Table',
           to: '/DataTable'
+        },
+        {
+          icon: 'mdi-account-plus',
+          title: 'Manage Products',
+          to: '/AddProducts'
         },
         {
           icon: 'mdi-account-plus',

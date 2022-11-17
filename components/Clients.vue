@@ -44,8 +44,8 @@
                         <td class="text-caption" >{{ data.Wilaya }}</td>
                         <td class="text-caption" >{{ data.PhoneNumber }}</td>
                         <td class="text-caption" >{{ data.Items }}</td>
-                        <td class="text-caption" >{{ data.Shiping }}</td>
-                        <td class="text-caption" >{{ data.Total }}</td>
+                        <td class="text-caption" >{{ data.Shiping }} DA</td>
+                        <td class="text-caption" >{{ data.Total }} DA</td>
                         <td class="text-caption" >{{ data.Status }}</td>
                         <td class="text-caption" ><v-btn @click="deleteClient(data)" class="red white--text rounded-xl">delete</v-btn></td>
                     </tr>
@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         deleteClient(data){
-            this.$axios.delete('/clients'+data.id).then(()=>{
+           db.deleteDocument('dash1','orders', data.$id).then(()=>{
                 alert('Your client has been deleted')
             })
         }

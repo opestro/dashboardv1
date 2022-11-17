@@ -5,6 +5,8 @@
                 <v-card-title>Login</v-card-title>
                 <v-text-field v-model="email" placeholder="Email">Email</v-text-field>
                 <v-text-field v-model="pass" placeholder="Passord">Password</v-text-field>
+               
+
             </div>
             <div class="d-flex justify-end ">
                 <v-btn @click="Login()" class="rounded-xl blue white--text">Login</v-btn>
