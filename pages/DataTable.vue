@@ -39,21 +39,19 @@
                     <v-text-field class="text-caption" v-model="data.Phone" label="Phone number">Phone number
                     </v-text-field>
                 </v-col>
-                <v-col cols="6">
-                    <v-select v-model="selectedFruits" :items="fruits" label="Favorite Fruits" multiple>
-
-                        <template v-slot:append-item>
-                            <v-divider class="mb-2"></v-divider>
-                            <v-list-item >
-                                <v-list-item-title>
-                                    Fruit Count
-                                </v-list-item-title>
-                                <v-list-item-subtitle v-for="product in Products" :key="product" >
-                                    {{ product.size }}
-                                </v-list-item-subtitle>
-                            </v-list-item>
-                        </template>
-                    </v-select>
+                <v-col sm="12" md="6">
+                    <div v-for="(Order, index) in Orders" :key="(index)" class="d-flex">
+                        <v-select v-model="Order.Items" :items="ProductTitles" label="Select Items"
+                            @change="getDetailsField(Order.Items)">
+                        </v-select>
+                        <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
+                            X
+                        </v-chip>
+                    </div>
+                    <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
+                        @click="addMore()">
+                        Add Item
+                    </v-btn>
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
@@ -93,9 +91,8 @@ export default {
             ],
             Orders: [
                 {
-                    'size': '',
-                    'colour':'',
-                    'Price': ''
+                    Items: '',
+                    _id: '',
                 }
             ]
 
@@ -119,7 +116,9 @@ export default {
                     "Shiping": this.data.Shiping + "",
                     "Total": this.data.Total + "",
                     "Status": "Processing" + ""
-                }).then((data) => { console.log(data) }).catch((err) => { alert(err) })
+                }).then((data) => {
+                    //console.log(data)
+                }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
             this.ShowClient = false
@@ -154,7 +153,7 @@ export default {
         // still need some work 
 
 
-        db.listDocuments('dash1', 'products').then((data) => {
+       db.listDocuments('dash1', 'products').then((data) => {
 
             const prdcts = data.documents
 
@@ -164,7 +163,10 @@ export default {
                 this.ProductTitles.push(product)
                 this.Products.push(
                     {
-                        size : product.Size
+                        title: item.Title,
+                        colours: item.Colours,
+                        size: item.Size,
+                        price: item.Price,
                     }
 
                 )
