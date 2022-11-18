@@ -47,6 +47,11 @@
                         <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
                             X
                         </v-chip>
+                        <div v-for="Order in Orders" :key="Order" class="d-flex">
+                            <v-select v-model="Order.Size" :items="detailsSize" label="Select Size">
+
+                            </v-select>
+                        </div>
                     </div>
                     <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
                         @click="addMore()">
@@ -80,21 +85,23 @@ export default {
             data: [],
             Done: false,
             ShowClient: true,
-        ProductTitles: [],
+            ProductTitles: [],
             Products: [
-             /*   {
-                    Title: '',
-                    Colours: '',
-                    Size: '',
-                    Price: '',
-                } */
+                /*   {
+                       Title: '',
+                       Colours: '',
+                       Size: '',
+                       Price: '',
+                   } */
             ],
             Orders: [
                 {
                     Items: '',
                     _id: '',
                 }
-            ]
+            ],
+            allData: '',
+            detailsSize: []
 
 
         }
@@ -137,14 +144,23 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        async  getDetailsField(title) {
-            console.log('Title : ' + title)
+        async getDetailsField(title) {
+            await db.listDocuments('dash1', 'products').then((data) => {
+                this.allData = data;
+                console.log(data)
+            })
+            const data = this.allData
+
+
             const Itemtitle = title
-           let prdcts = this.Products
-            const rzlt =    prdcts.map(item => ({ Title: item.Title, size: item.Size})).filter(item => (item.Title == Itemtitle))
-                console.log(rzlt)
-        
-            
+            const rzlt = data.documents.map(item => ({ Title: item.Title, size: item.Size })).filter(item => (item.Title == Itemtitle))
+            console.log(rzlt)
+            rzlt.forEach(item => {
+                this.detailsSize.push(item.size)
+
+            })
+
+
         }
 
     },
@@ -153,7 +169,7 @@ export default {
         // still need some work 
 
 
-       db.listDocuments('dash1', 'products').then((data) => {
+        db.listDocuments('dash1', 'products').then((data) => {
 
             const prdcts = data.documents
 
