@@ -163,9 +163,12 @@ export default {
                 this.allData = data;
             })
             const data = this.allData
-           // const Colour = Colour
-            const rzlt = data.documents.map(item => ({Colours: item.Colours,Size: item.Size })).filter(item => (item.Colours == Colour))
+            
+            const Clr = Colour
+            this.detailsSize = []
+            const rzlt = data.documents.map(item => ({Colours: item.Colours,Size: item.Size })).filter(item => (item.Colours == Clr))
             rzlt.forEach(item => {
+               
                 this.detailsSize.push(item.Size)
             })
         },
