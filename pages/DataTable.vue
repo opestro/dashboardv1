@@ -30,8 +30,8 @@
             <v-card-title>
                 Add New Client
             </v-card-title>
-            <v-card-subtitle class="d-flex">
-                <v-col cols="6">
+            <v-card-subtitle class="d-md-flex d-sm-block ">
+                <v-col sm="12" md="6">
                     <v-text-field class="text-caption" v-model="data.Full_Name" label="Full name">Full Name
                     </v-text-field>
                     <v-text-field class="text-caption" v-model="data.Address" label="Address">Address</v-text-field>
@@ -39,21 +39,19 @@
                     <v-text-field class="text-caption" v-model="data.Phone" label="Phone number">Phone number
                     </v-text-field>
                 </v-col>
-                <v-col cols="6">
-                    <v-select v-model="selectedFruits" :items="fruits" label="Favorite Fruits" multiple>
-
-                        <template v-slot:append-item>
-                            <v-divider class="mb-2"></v-divider>
-                            <v-list-item >
-                                <v-list-item-title>
-                                    Fruit Count
-                                </v-list-item-title>
-                                <v-list-item-subtitle v-for="product in Products" :key="product" >
-                                    {{ product.size }}
-                                </v-list-item-subtitle>
-                            </v-list-item>
-                        </template>
-                    </v-select>
+                <v-col sm="12" md="6">
+                    <div v-for="(Order, index) in Orders" :key="(index)" class="d-flex">
+                        <v-select v-model="Order.Items" :items="ProductTitles" label="Select Items"
+                            @change="getDetailsField(Order.Items)">
+                        </v-select>
+                        <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
+                            X
+                        </v-chip>
+                    </div>
+                    <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
+                        @click="addMore()">
+                        Add Item
+                    </v-btn>
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
@@ -82,13 +80,21 @@ export default {
             data: [],
             Done: false,
             ShowClient: true,
+        ProductTitles: [],
             Products: [
-                {
-                    'size': '',
-                    'colour':'',
-                    'Price': ''
-                }
+             /*   {
+                    Title: '',
+                    Colours: '',
+                    Size: '',
+                    Price: '',
+                } */
             ],
+            Orders: [
+                {
+                    Items: '',
+                    _id: '',
+                }
+            ]
 
 
         }
@@ -110,13 +116,36 @@ export default {
                     "Shiping": this.data.Shiping + "",
                     "Total": this.data.Total + "",
                     "Status": "Processing" + ""
-                }).then((data) => { console.log(data) }).catch((err) => { alert(err) })
+                }).then((data) => {
+                    //console.log(data)
+                }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
             this.ShowClient = false
             this.ShowClient = true
 
         },
+        addMore() {
+            this.Orders.push({
+
+                name: '',
+                _id: '',
+
+            });
+        },
+        // function to remove variations 
+        remove(index) {
+            this.Orders.splice(index, 1);
+        },
+        async  getDetailsField(title) {
+            console.log('Title : ' + title)
+            const Itemtitle = title
+           let prdcts = this.Products
+            const rzlt =    prdcts.map(item => ({ Title: item.Title, size: item.Size})).filter(item => (item.Title == Itemtitle))
+                console.log(rzlt)
+        
+            
+        }
 
     },
     beforeMount() {
@@ -124,19 +153,26 @@ export default {
         // still need some work 
 
 
-        db.listDocuments('dash1', 'products').then((data) => {
+       db.listDocuments('dash1', 'products').then((data) => {
 
             const prdcts = data.documents
+
             prdcts.forEach(item => {
-                var product = item
+                var product = item.Title
+                //  this.Products.push(product)
+                this.ProductTitles.push(product)
                 this.Products.push(
                     {
-                        size : product.Size
+                        title: item.Title,
+                        colours: item.Colours,
+                        size: item.Size,
+                        price: item.Price,
                     }
-                )
-                console.log(this.Products)
-            })
 
+                )
+
+            })
+            console.log(...this.Products)
             /*   for (let i = 0; i < prdcts.length; i++) {
                    this.Item.push( prdcts[i].Title)
                    this.size.push( prdcts[i].Size)
@@ -147,6 +183,7 @@ export default {
 
 
         })
+
     }
 
 }
