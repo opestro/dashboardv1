@@ -73,7 +73,7 @@ export default {
     beforeMount(){
         // function to get Documents of orders
         db.listDocuments('dash1','orders').then((data)=>{
-            console.log(data)
+          //  console.log(data)
             this.clients = data.documents
         })
     }
