@@ -169,7 +169,7 @@ export default {
                 this.detailsSize.push(item.Size)
             })
         },
-        async getDetailsStock(Size) {
+       /* async getDetailsStock(Size) {
             await db.listDocuments('dash1', 'products').then((data) => {
                 this.allData = data;
             })
@@ -179,7 +179,7 @@ export default {
             rzlt.forEach(item => {
                 this.detailsStock.push(item.Stock)
             })
-        }
+        }*/
 
     },
     beforeMount() {
