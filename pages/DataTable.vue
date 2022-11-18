@@ -41,17 +41,22 @@
                 </v-col>
                 <v-col sm="12" md="6">
                     <div v-for="(Order, index) in Orders" :key="(index)" class="d-flex">
-                        <v-select v-model="Order.Items" :items="ProductTitles" label="Select Items"
-                            @change="getDetailsField(Order.Items)">
+                        <v-select v-model="Order.Item" :items="ProductTitles" label="Select Items"
+                            @change="getDetailsColour(Order.Item)">
                         </v-select>
+                        <v-select v-model="Order.Colour" :items="detailsColour" label="Select Size"
+                        @change="getDetailsSize(Order.Colour)">
+                        </v-select>
+                        <v-select v-model="Order.Stock" :items="detailsSize" label="Select Size">
+                        </v-select>
+                        
                         <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
                             X
                         </v-chip>
-                        <div v-for="Order in Orders" :key="Order" class="d-flex">
-                            <v-select v-model="Order.Size" :items="detailsSize" label="Select Size">
 
-                            </v-select>
-                        </div>
+                    </div>
+                    <div v-for="Order in Orders" :key="Order" class="d-flex">
+
                     </div>
                     <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
                         @click="addMore()">
@@ -86,22 +91,19 @@ export default {
             Done: false,
             ShowClient: true,
             ProductTitles: [],
-            Products: [
-                /*   {
-                       Title: '',
-                       Colours: '',
-                       Size: '',
-                       Price: '',
-                   } */
-            ],
+            Products: [],
             Orders: [
                 {
-                    Items: '',
-                    _id: '',
+                    Item: '',
+                    Colour: '',
+                    Size: '',
+                    Stock: '',
                 }
             ],
             allData: '',
-            detailsSize: []
+            detailsColour: [],
+            detailsSize: [],
+            detailsStock: [],
 
 
         }
@@ -144,22 +146,39 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        async getDetailsField(title) {
+        async getDetailsColour(title) {
             await db.listDocuments('dash1', 'products').then((data) => {
                 this.allData = data;
-                console.log(data)
             })
             const data = this.allData
-
-
             const Itemtitle = title
-            const rzlt = data.documents.map(item => ({ Title: item.Title, size: item.Size })).filter(item => (item.Title == Itemtitle))
+            const rzlt = data.documents.map(item => ({Title: item.Title ,Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
             console.log(rzlt)
             rzlt.forEach(item => {
-                this.detailsSize.push(item.size)
+                this.detailsColour.push(item.Colours)
             })
-
-
+        },
+        async getDetailsSize(Colour) {
+            await db.listDocuments('dash1', 'products').then((data) => {
+                this.allData = data;
+            })
+            const data = this.allData
+           // const Colour = Colour
+            const rzlt = data.documents.map(item => ({Colours: item.Colours,Size: item.Size })).filter(item => (item.Colours == Colour))
+            rzlt.forEach(item => {
+                this.detailsSize.push(item.Size)
+            })
+        },
+        async getDetailsStock(Size) {
+            await db.listDocuments('dash1', 'products').then((data) => {
+                this.allData = data;
+            })
+            const data = this.allData
+            const Itemtitle = title
+            const rzlt = data.documents.map(item => ({Stock: item.Ref })).filter(item => (item.Size == Size))
+            rzlt.forEach(item => {
+                this.detailsStock.push(item.Stock)
+            })
         }
 
     },
