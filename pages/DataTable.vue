@@ -157,7 +157,6 @@ export default {
             console.log(rzlt)
             rzlt.forEach(item => {
                 this.detailsSize.push(item.size)
-
             })
 
 
