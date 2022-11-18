@@ -3,7 +3,7 @@ import { Client, Account, Databases, Storage, ID, Permission, Role  } from "appw
 const client = new Client();
 
 client
-    .setEndpoint('http://192.168.1.8/v1') // Your API Endpoint
+    .setEndpoint('http://192.168.1.11/v1') // Your API Endpoint
     .setProject('dash1') // Your project ID
 ;
 const account = new Account(client);

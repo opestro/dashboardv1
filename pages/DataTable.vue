@@ -40,15 +40,20 @@
                     </v-text-field>
                 </v-col>
                 <v-col cols="6">
-                    <v-autocomplete :v-model="Item"
-                        :items="Item" v-model="data.Items" outlined dense chips small-chips label="Items" multiple>
-                    </v-autocomplete>
-                    <v-autocomplete :v-model="size"
-                        :items="size" v-model="data.Size" outlined dense chips small-chips label="Size" multiple>
-                    </v-autocomplete>
-                    <v-autocomplete :v-model="colour"
-                        :items="colour" v-model="data.Colour" outlined dense chips small-chips label="Colour" multiple>
-                    </v-autocomplete>
+                    <v-select v-model="selectedFruits" :items="fruits" label="Favorite Fruits" multiple>
+
+                        <template v-slot:append-item>
+                            <v-divider class="mb-2"></v-divider>
+                            <v-list-item >
+                                <v-list-item-title>
+                                    Fruit Count
+                                </v-list-item-title>
+                                <v-list-item-subtitle v-for="product in Products" :key="product" >
+                                    {{ product.size }}
+                                </v-list-item-subtitle>
+                            </v-list-item>
+                        </template>
+                    </v-select>
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
@@ -77,10 +82,14 @@ export default {
             data: [],
             Done: false,
             ShowClient: true,
-            Item:[],
-            size: [],
-            colour: [],
-            Price: []
+            Products: [
+                {
+                    'size': '',
+                    'colour':'',
+                    'Price': ''
+                }
+            ],
+
 
         }
     },
@@ -111,21 +120,30 @@ export default {
 
     },
     beforeMount() {
-      // function to get Documents of Products from the database
-      // still need some work 
+        // function to get Documents of Products from the database
+        // still need some work 
+
+
         db.listDocuments('dash1', 'products').then((data) => {
 
             const prdcts = data.documents
-            for (let i = 0; i < prdcts.length; i++) {
-                this.Item.push( prdcts[i].Title)
-                this.size.push( prdcts[i].Size)
-                this.colour.push( prdcts[i].Colours)
-                this.Price.push( prdcts[i].Price)
-                console.log(prdcts);
+            prdcts.forEach(item => {
+                var product = item
+                this.Products.push(
+                    {
+                        size : product.Size
+                    }
+                )
+                console.log(this.Products)
+            })
 
-
-
-            }
+            /*   for (let i = 0; i < prdcts.length; i++) {
+                   this.Item.push( prdcts[i].Title)
+                   this.size.push( prdcts[i].Size)
+                   this.colour.push( prdcts[i].Colours)
+                   this.Price.push( prdcts[i].Price)
+                   console.log(prdcts);
+               }*/
 
 
         })
