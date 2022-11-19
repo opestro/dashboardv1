@@ -40,23 +40,23 @@
                     </v-text-field>
                 </v-col>
                 <v-col sm="12" md="6">
-                    <div v-for="(Order, index) in Orders" :key="(index)" class="d-flex">
-                        <v-select v-model="Order.Item" :items="ProductTitles" label="Select Items"
-                            @change="getDetailsColour(Order.Item)">
-                        </v-select>
-                        <v-select v-model="Order.Colour" :items="detailsColour" label="Select Size"
-                        @change="getDetailsSize(Order.Colour)">
-                        </v-select>
-                        <v-select v-model="Order.Stock" :items="detailsSize" label="Select Size">
-                        </v-select>
-                        
-                        <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
-                            X
-                        </v-chip>
-
-                    </div>
-                    <div v-for="Order in Orders" :key="Order" class="d-flex">
-
+                    <div v-for="(Order, index) in Orders" :key="(index)">
+                        <div class="d-flex">
+                            <v-select v-model="Order.Item" :items="ProductTitles" label="Select Items"
+                                @change="getDetailsColour(Order.Item)">
+                            </v-select>
+                            <v-select v-model="Order.Colour" :items="detailsColour" label="Select Size"
+                                @change="getDetailsSize(Order.Colour)">
+                            </v-select>
+                            <v-select v-model="Order.Size" :items="detailsSize" label="Select Size">
+                            </v-select>
+                        </div>
+                        <div class="d-flex">
+                            <v-text-field v-model="Order.Qnt" placeholder="Quantity"></v-text-field>
+                            <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
+                                X
+                            </v-chip>
+                        </div>
                     </div>
                     <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
                         @click="addMore()">
@@ -65,10 +65,7 @@
                     <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
                     <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
                 </v-col>
-
-
             </v-card-subtitle>
-
         </v-card>
         <v-spacer class="py-2"></v-spacer>
         <v-card class="rounded-xl" elevation="5">
@@ -97,7 +94,7 @@ export default {
                     Item: '',
                     Colour: '',
                     Size: '',
-                    Stock: '',
+                    Qnt: '',
                 }
             ],
             allData: '',
@@ -152,7 +149,7 @@ export default {
             })
             const data = this.allData
             const Itemtitle = title
-            const rzlt = data.documents.map(item => ({Title: item.Title ,Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
+            const rzlt = data.documents.map(item => ({ Title: item.Title, Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
             console.log(rzlt)
             rzlt.forEach(item => {
                 this.detailsColour.push(item.Colours)
@@ -163,26 +160,26 @@ export default {
                 this.allData = data;
             })
             const data = this.allData
-            
+
             const Clr = Colour
             this.detailsSize = []
-            const rzlt = data.documents.map(item => ({Colours: item.Colours,Size: item.Size })).filter(item => (item.Colours == Clr))
+            const rzlt = data.documents.map(item => ({ Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
             rzlt.forEach(item => {
-               
+
                 this.detailsSize.push(item.Size)
             })
         },
-       /* async getDetailsStock(Size) {
-            await db.listDocuments('dash1', 'products').then((data) => {
-                this.allData = data;
-            })
-            const data = this.allData
-            const Itemtitle = title
-            const rzlt = data.documents.map(item => ({Stock: item.Ref })).filter(item => (item.Size == Size))
-            rzlt.forEach(item => {
-                this.detailsStock.push(item.Stock)
-            })
-        }*/
+        /* async getDetailsStock(Size) {
+             await db.listDocuments('dash1', 'products').then((data) => {
+                 this.allData = data;
+             })
+             const data = this.allData
+             const Itemtitle = title
+             const rzlt = data.documents.map(item => ({Stock: item.Ref })).filter(item => (item.Size == Size))
+             rzlt.forEach(item => {
+                 this.detailsStock.push(item.Stock)
+             })
+         }*/
 
     },
     beforeMount() {
