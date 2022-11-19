@@ -101,8 +101,6 @@ export default {
             detailsColour: [],
             detailsSize: [],
             detailsStock: [],
-
-
         }
     },
     methods: {
@@ -114,14 +112,14 @@ export default {
         AddNewClient() {
             db.createDocument('dash1', 'orders', "unique()",
                 {
-                    "FullName": this.data.Full_Name + "",
-                    "Address": this.data.Address + "",
-                    "Wilaya": this.data.Wilaya + "",
-                    "PhoneNumber": this.data.Phone + "",
-                    "Items": this.data.Items + "",
-                    "Shiping": this.data.Shiping + "",
-                    "Total": this.data.Total + "",
-                    "Status": "Processing" + ""
+                    "FullName": this.data.Full_Name,
+                    "Address": this.data.Address,
+                    "Wilaya": this.data.Wilaya,
+                    "PhoneNumber": this.data.Phone,
+                    "Items": this.data.Items,
+                    "Shiping": this.data.Shiping,
+                    "Total": this.data.Total,
+                    "Status": "Processing"
                 }).then((data) => {
                     //console.log(data)
                 }).catch((err) => { alert(err) })
