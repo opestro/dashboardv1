@@ -1,57 +1,125 @@
 <template>
-    <div >
-        <v-simple-table class="rounded-xl">
-            <template v-slot:default  >
-                <thead >
-                    <tr>
-                        <th class="text-left">
-                            ID
-                        </th>
-                        <th class="text-left">
-                            FullName
-                        </th>
-                        <th class="text-left">
-                            Address
-                        </th>
-                        <th class="text-left">
-                            Wilaya
-                        </th>
-                        <th class="text-left">
-                            PhoneNumber
-                        </th>
-                        <th class="text-left">
-                            Items
-                        </th>
-                        <th class="text-left">
-                            Shiping
-                        </th>
-                        <th class="text-left">
-                            Total
-                        </th>
-                        <th class="text-left">
-                            Status
-                        </th>
-                        <th class="text-left">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="data in clients" :key="data">
-                        <td class="text-caption" >{{ data.$id }}</td>
-                        <td class="text-caption" >{{ data.FullName }}</td>
-                        <td class="text-caption" >{{ data.Address }}</td>
-                        <td class="text-caption" >{{ data.Wilaya }}</td>
-                        <td class="text-caption" >{{ data.PhoneNumber }}</td>
-                        <td class="text-caption" >{{ data.Items }}</td>
-                        <td class="text-caption" >{{ data.Shiping }} DA</td>
-                        <td class="text-caption" >{{ data.Total }} DA</td>
-                        <td class="text-caption" >{{ data.Status }}</td>
-                        <td class="text-caption" ><v-btn @click="deleteClient(data)" outlined class="red white--text rounded-xl">delete</v-btn></td>
-                    </tr>
-                </tbody>
+    <div class="">
+        <v-data-table :headers="headers" :items="orders" sort-by="calories" class="rounded-xl elevation-1">
+            <template v-slot:top>
+                <v-toolbar flat class="rounded-xl">
+                    <v-toolbar-title>Orders</v-toolbar-title>
+                    <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-dialog v-model="dialog" max-width="500px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn color="primary" dark class="mb-2 rounded-xl" v-bind="attrs" v-on="on">
+                                New Item
+                            </v-btn>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">{{ formTitle }}</span>
+                            </v-card-title>
+
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.Fullname" label="Full Name"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.Address" label="Address"></v-text-field>
+                                        </v-col>
+
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.Wilaya" label="Wilaya"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.PhoneNumber" label="Phone Number">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <div v-for="(Order, index) in addfield" :key="(index)">
+                                            <v-row>
+                                                <v-col cols="12">
+                                                    <v-select v-model="newOrder.Item" :items="itemDetails" item-text="Title" item-value="Title"
+                                                        label="Select Items" @change="getDetailsColour(newOrder.Item)">
+                                                    </v-select>
+                                                </v-col>
+                                                <v-col cols="12" sm="6" md="6">
+                                                    <v-select v-model="newOrder.Colour" :item-text="itemDetails.Colour"
+                                                        label="Select Colour" @change="getDetailsSize(newOrder.Colour)">
+                                                    </v-select>
+                                                </v-col>
+                                                <v-col cols="12" sm="6" md="6">
+                                                    <v-select v-model="newOrder.Size" :items="itemDetails.Size"
+                                                        label="Select Size">
+                                                    </v-select>
+                                                </v-col>
+                                            </v-row>
+                                            <div class="d-flex">
+                                                <v-text-field v-model="newOrder.Qnt" placeholder="Quantity">
+                                                </v-text-field>
+                                                <v-card-subtitle>
+                                                    <v-chip class="" color="red" outlined @click="remove(index)"
+                                                        v-show="index != 0"> Delete
+                                                        X
+                                                    </v-chip>
+                                                </v-card-subtitle>
+                                            </div>
+                                        </div>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.Shipping" label="Shiping">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="newOrder.Total" label="Total">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-btn color="blue darken-1" text @click="addMore()">
+                                    Add Variation
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close">
+                                    Cancel
+                                </v-btn>
+                                <v-btn color="blue darken-1" text @click="AddNewClient()">
+                                    Add Order
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                    <v-dialog v-model="dialogDelete" max-width="500px">
+                        <v-card>
+                            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                                <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-toolbar>
             </template>
-        </v-simple-table>
+            <template v-slot:item.actions="{ item }">
+                <v-icon small class="mr-2" @click="editItem(item)">
+                    mdi-pencil
+                </v-icon>
+                <v-icon small @click="deleteClient(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
+            <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">
+                    Reset
+                </v-btn>
+            </template>
+        </v-data-table>
     </div>
 </template>
 <script>
@@ -59,23 +127,215 @@ import { db } from "../appwrite.js"
 export default {
     data() {
         return {
-            clients: [],
+            addfield: [{
+                Item: '',
+                Size: '',
+                Colour: '',
+            }],
+            newOrder: [],
+            dialog: false,
+            dialogDelete: false,
+            headers: [
+                {
+                    text: 'ID',
+                    align: 'start',
+                    sortable: false,
+                    value: '$id',
+                },
+                { text: 'Full Name', value: 'FullName' },
+                { text: 'Wilaya', value: 'Wilaya' },
+                { text: 'Phone Number', value: 'PhoneNumber' },
+                { text: 'Total', value: 'Total' },
+                { text: 'Status', value: 'Status' },
+
+                { text: 'Actions', value: 'actions', sortable: false },
+            ],
+            orders: [],
+            editedIndex: -1,
+            editedItem: {
+                id: '',
+                FullName: 0,
+                Wilaya: 0,
+                PhoneNumber: 0,
+                Total: 0,
+                Status: 0
+            },
+            defaultItem: {
+                id: '',
+                FullName: 0,
+                Wilaya: 0,
+                PhoneNumber: 0,
+                Total: 0,
+                Status: 0
+            },
+            itemDetails:[]
         }
     },
     methods: {
-        // function to delete order
-        deleteClient(data){
-           db.deleteDocument('dash1','orders', data.$id).then(()=>{
-                alert('Your client has been deleted')
+        // function to Create a new Order
+        AddNewClient() {
+            console.log(this.newOrder)
+            /*  db.createDocument('dash1', 'orders', "unique()",
+                  {
+                      "FullName": this.data.Full_Name,
+                      "Address": this.data.Address,
+                      "Wilaya": this.data.Wilaya,
+                      "PhoneNumber": this.data.Phone,
+                      "Items": this.data.Items,
+                      "Shiping": this.data.Shiping,
+                      "Total": this.data.Total,
+                      "Status": "Processing"
+                  }).then((data) => {
+                      //console.log(data)
+                  }).catch((err) => { alert(err) })
+              this.AddNew = false
+              this.Done = true
+              this.ShowClient = false
+              this.ShowClient = true*/
+
+        },
+        addMore() {
+            this.addfield.push({
+                Item: '',
+                Size: '',
+                Colour: '',
+            });
+        },
+        // function to remove variations 
+        remove(index) {
+            this.Orders.splice(index, 1);
+        },
+        async getDetailsColour(title) {
+            await db.listDocuments('dash1', 'products').then((data) => {
+
+                const allData = data
+                const Itemtitle = title
+                const rzlt = allData.documents.map(item => ({ Title: item.Title, Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
+                rzlt.forEach(item => {
+                    this.itemDetails.push(
+                    {
+                        Title : item.Title,
+                        Colour: item.Colours,
+                    })
+                })
             })
-        }
+
+        },
+        async getDetailsSize(Colour) {
+            await db.listDocuments('dash1', 'products').then((data) => {
+            
+                const allData = data
+                const Clr = Colour
+                this.itemDetails.Size = ''
+                const rzlt = allData.documents.map(item => ({Title: item.Title,Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
+                rzlt.forEach(item => {
+                    console.log('TT : '+item)
+                    this.itemDetails.push(
+                    {
+                        Title : item.Title,
+                        Colour: item.Colours,
+                        Size: item.Size,
+                    })
+                })
+            })
+
+        },
+        // function to delete order
+        deleteClient(data) {
+            db.deleteDocument('dash1', 'orders', data.$id).then(() => {
+                this.editedIndex = this.orders.indexOf(data)
+                this.editedItem = Object.assign({}, data)
+                this.dialogDelete = true
+            })
+            console.log(data.$id)
+
+        },
+        initialize() {
+            db.listDocuments('dash1', 'orders').then((data) => {
+                //  console.log(data)
+                const rzlt = data.documents
+                // rzlt.forEach(orders => {});
+                this.orders = rzlt
+                //    console.log(this.orders)
+            }),
+                db.listDocuments('dash1', 'products').then((data) => {
+                    const prdcts = data.documents
+                    prdcts.forEach(data => {
+                        const items = data
+                        this.itemDetails.push(items)
+                     
+
+                    })
+                    console.log( this.itemDetails)
+                })
+        },
+
+        editItem(item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialog = true
+        },
+
+        deleteItem(item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialogDelete = true
+        },
+
+        deleteItemConfirm() {
+            this.orders.splice(this.editedIndex, 1)
+            this.closeDelete()
+        },
+
+        close() {
+            this.dialog = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        closeDelete() {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            })
+        },
+
+        save() {
+            if (this.editedIndex > -1) {
+                Object.assign(this.desserts[this.editedIndex], this.editedItem)
+            } else {
+                this.desserts.push(this.editedItem)
+            }
+            this.close()
+        },
     },
-    beforeMount(){
+    beforeMount() {
         // function to get Documents of orders
-        db.listDocuments('dash1','orders').then((data)=>{
-          //  console.log(data)
-            this.clients = data.documents
-        })
-    }
+
+    },
+    computed: {
+        formTitle() {
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+    },
+
+    watch: {
+        dialog(val) {
+            val || this.close()
+        },
+        dialogDelete(val) {
+            val || this.closeDelete()
+        },
+    },
+
+    created() {
+        this.initialize()
+    },
+
+
+
 }
 </script>

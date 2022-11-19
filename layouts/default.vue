@@ -71,8 +71,8 @@ export default {
         },
         {
           icon: 'mdi-account-group',
-          title: 'Data Table',
-          to: '/DataTable'
+          title: 'Orders',
+          to: '/Orders'
         },
         {
           icon: 'mdi-account-plus',
