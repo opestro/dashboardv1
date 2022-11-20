@@ -9,7 +9,7 @@
                     <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn color="primary" dark class="mb-2 rounded-xl" v-bind="attrs" v-on="on">
-                                New Product
+                                New Product Name
                             </v-btn>
                         </template>
                         <v-card>
@@ -20,21 +20,8 @@
                             <v-card-text>
                                 <v-container>
                                     <v-row>
-                                        <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.protein" label="Protein (g)">
-                                            </v-text-field>
+                                        <v-col cols="12">
+                                            <v-text-field v-model="ProductName" label="Product name"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -45,8 +32,8 @@
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn color="blue darken-1" text @click="save">
-                                    Save
+                                <v-btn color="blue darken-1" text @click="createProductsName()">
+                                    Create
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
@@ -84,12 +71,12 @@
     </div>
 </template>
 <script>
-import { db, Query } from "../appwrite.js"
+import { db, Query, ID } from "../appwrite.js"
 export default {
     data() {
         return {
             ProductsName: [],
-            ProductsID: [],
+            ProductName: '',
             DataName: [],
             DataDetails: [],
             dialog: false,
@@ -143,7 +130,7 @@ export default {
     methods: {
         // function to delete Product
         deleteProductsDetail() {
-           
+
             db.deleteDocument('dash1', 'ProductsDetail', _id).then(() => {
 
             })
@@ -154,6 +141,18 @@ export default {
                 this.ProductsName.splice(this.editedIndex, 1)
                 this.closeDelete()
             })
+        },
+        createProductsName() {
+            db.createDocument('dash1', 'ProductsName', 'unique()', {Name: this.ProductName })
+            .then(() => { })
+            .catch((err) => { console.log(err) });
+            if (this.editedIndex > -1) {
+                Object.assign(this.ProductsName.Name[this.editedIndex], this.editedItem)
+            } else {
+                const name = this.ProductsName.Name
+                this.ProductsName.push({Name : this.editedItem})
+            }
+            this.close()
         },
         initialize() {
             db.listDocuments('dash1', 'ProductsName').then((data) => {
