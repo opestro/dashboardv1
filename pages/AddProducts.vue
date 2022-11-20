@@ -22,7 +22,7 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12">
-                                            <v-text-field v-model="editedItem.Name" label="Product name"></v-text-field>
+                                            <v-text-field label="Product name"></v-text-field>
                                         </v-col>
                                     </v-row>
 
@@ -43,9 +43,17 @@
                     <v-dialog v-model="dialogAddNew" max-width="500px" content-class=" rounded-xl">
                         <v-card class="pa-5 rounded-xl">
                             <v-container>
-                                <v-card-title>
+                                <div class="d-flex justify-space-between align-center" >
+                                    <v-card-title>
                                     <span class="text-h5">{{ formTitle }}</span>
                                 </v-card-title>
+                                <v-card-actions class="align-center">
+                                    <v-btn color="blue darken-1" text @click="addMore()">
+                                        Add Variation
+                                    </v-btn>
+                                </v-card-actions>
+                                </div>
+
                                 <v-row>
                                     <v-col cols="12">
                                         <v-text-field v-model="DataDetails.Name" label="Product name"></v-text-field>
@@ -67,29 +75,26 @@
                                             <v-text-field v-model="DataDetails.Quantity" label="Product Quantity">
                                             </v-text-field>
                                         </v-col>
-                                        
+
                                         <v-chip class="" color="red" outlined @click="remove(index)"
                                             v-show="index != 0">
-                                            Delete
                                             X
                                         </v-chip>
                                     </v-row>
                                     <v-row>
-                                        <v-col >
-                                            
+                                        <v-col>
+
                                         </v-col>
                                     </v-row>
                                 </div>
 
                                 <v-card-actions>
-                                    <v-btn color="blue darken-1" text @click="addMore()">
-                                        Add Variation
-                                    </v-btn>
+
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="close">
                                         Cancel
                                     </v-btn>
-                                    <v-btn color="blue darken-1" text @click="AddNewClient()">
+                                    <v-btn color="blue darken-1" text @click="createProductsName()">
                                         Add Order
                                     </v-btn>
                                 </v-card-actions>
@@ -165,7 +170,13 @@ export default {
             ProductsName: [],
             ProductDetail: [],
             dialogAddNew: false,
-            DataDetails: [],
+            DataDetails: {
+                Name: '',
+                Colour: '',
+                Size: '',
+                Quantity: '',
+                $id: ''
+            },
             dialog: false,
             dialogDelete: false,
             headers: [
@@ -185,6 +196,9 @@ export default {
             },
             defaultItem: {
                 Name: '',
+                Colour: '',
+                Size: '',
+                Quantity: '',
                 $id: ''
             },
         }
@@ -236,18 +250,19 @@ export default {
         },
         createProductsName() {
             if (this.editedIndex > -1) {
-                Object.assign(this.ProductsName[this.editedIndex], this.editedItem)
+                Object.assign(this.ProductsName[this.editedIndex], this.DataDetails)
                 db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
                     { Name: this.ProductDetail.Name });
 
 
             } else {
-                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.editedItem.Name })
+                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.DataDetails.Name })
                     .then((data) => {
-                        this.editedItem.$id = data.$id
-                        this.ProductsName.push(this.editedItem)
+                        this.DataDetails = data
+                        this.ProductsName.push(this.DataDetails)
                     })
                     .catch((err) => { console.log(err) });
+                console.log(this.DataDetails)
 
 
             }
@@ -264,26 +279,26 @@ export default {
             this.ProductDetail = item
             this.editedIndex = this.ProductsName.indexOf(item)
             //  console.log(this.ProductDetail)
-            this.editedItem = Object.assign({}, item)
+            this.DataDetails = Object.assign({}, item)
             this.dialog = true
         },
 
         deleteItem(item) {
             this.ProductsID = item.$id
             this.editedIndex = this.ProductsName.indexOf(item)
-            this.editedItem = Object.assign({}, item)
+            this.DataDetails = Object.assign({}, item)
             this.dialogDelete = true
         },
         addVariation(item) {
             this.ProductsID = item.$id
             this.editedIndex = this.ProductsName.indexOf(item)
-            this.editedItem = Object.assign({}, item)
+            this.DataDetails = Object.assign({}, item)
             this.dialogVariation = true
         },
         close() {
             this.dialog = false
             this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
+                this.DataDetails = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
             })
         },
@@ -291,14 +306,14 @@ export default {
         closeDelete() {
             this.dialogDelete = false
             this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
+                this.DataDetails = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
             })
         },
         closeVariation() {
             this.dialogVariation = false
             this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
+                this.DataDetails = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
             })
         },
