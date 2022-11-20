@@ -21,7 +21,7 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12">
-                                            <v-text-field v-model="ProductName" label="Product name"></v-text-field>
+                                            <v-text-field v-model="editedItem.Name" label="Product name"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -76,7 +76,7 @@ export default {
     data() {
         return {
             ProductsName: [],
-            ProductName: '',
+            ProductName: [],
             DataName: [],
             DataDetails: [],
             dialog: false,
@@ -94,18 +94,12 @@ export default {
             desserts: [],
             editedIndex: -1,
             editedItem: {
-                name: '',
-                calories: 0,
-                fat: 0,
-                carbs: 0,
-                protein: 0,
+                Name: '',
+                $id:''
             },
             defaultItem: {
-                name: '',
-                calories: 0,
-                fat: 0,
-                carbs: 0,
-                protein: 0,
+                Name: '',
+                $id:''
             },
         }
     },
@@ -130,9 +124,7 @@ export default {
     methods: {
         // function to delete Product
         deleteProductsDetail() {
-
             db.deleteDocument('dash1', 'ProductsDetail', _id).then(() => {
-
             })
         },
         deleteProductsName() {
@@ -143,23 +135,23 @@ export default {
             })
         },
         createProductsName() {
-            db.createDocument('dash1', 'ProductsName', 'unique()', {Name: this.ProductName })
-            .then(() => { })
-            .catch((err) => { console.log(err) });
-            if (this.editedIndex > -1) {
-                Object.assign(this.ProductsName.Name[this.editedIndex], this.editedItem)
+            db.createDocument('dash1', 'ProductsName', 'unique()', {Name: this.editedItem.Name })
+            .then((data) => {
+                this.editedItem.$id = data.$id
+                if (this.editedIndex > -1) {
+                Object.assign(this.ProductsName[this.editedIndex], this.editedItem)
             } else {
-                const name = this.ProductsName.Name
-                this.ProductsName.push({Name : this.editedItem})
+                this.ProductsName.push(this.editedItem)
             }
             this.close()
+            })
+            .catch((err) => { console.log(err) });
         },
         initialize() {
             db.listDocuments('dash1', 'ProductsName').then((data) => {
                 this.ProductsName = data.documents
 
             })
-
         },
 
         editItem(item) {
@@ -174,12 +166,6 @@ export default {
             this.editedItem = Object.assign({}, item)
             this.dialogDelete = true
         },
-
-        deleteItemConfirm() {
-            this.desserts.splice(this.editedIndex, 1)
-            this.closeDelete()
-        },
-
         close() {
             this.dialog = false
             this.$nextTick(() => {
@@ -195,25 +181,6 @@ export default {
                 this.editedIndex = -1
             })
         },
-
-        save() {
-            if (this.editedIndex > -1) {
-                Object.assign(this.desserts[this.editedIndex], this.editedItem)
-            } else {
-                this.desserts.push(this.editedItem)
-            }
-            this.close()
-        },
-    },
-    beforeMount() {
-        // function to get Documents of Products
-
-        db.listDocuments(
-            "dash1", "ProductsDetail",
-            [
-                Query.equal('id_')
-            ]
-        )
     }
 }
 </script>
