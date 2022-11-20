@@ -76,7 +76,7 @@ export default {
     data() {
         return {
             ProductsName: [],
-            ProductName: [],
+            ProductDetail: [],
             DataName: [],
             DataDetails: [],
             dialog: false,
@@ -95,11 +95,11 @@ export default {
             editedIndex: -1,
             editedItem: {
                 Name: '',
-                $id:''
+                $id: ''
             },
             defaultItem: {
                 Name: '',
-                $id:''
+                $id: ''
             },
         }
     },
@@ -135,17 +135,27 @@ export default {
             })
         },
         createProductsName() {
-            db.createDocument('dash1', 'ProductsName', 'unique()', {Name: this.editedItem.Name })
-            .then((data) => {
-                this.editedItem.$id = data.$id
-                if (this.editedIndex > -1) {
-                Object.assign(this.ProductsName[this.editedIndex], this.editedItem)
+           
+            if (this.editedIndex > -1) {
+                Object.assign(this.ProductsName[this.editedIndex], this.editedItem).then(()=>{
+                    db.updateDocument('dash1',
+                     'ProductsName',
+                      this.ProductDetail.$id,
+                       { Name: this.ProductDetail.Name});
+                })
+
             } else {
-                this.ProductsName.push(this.editedItem)
+                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.editedItem.Name })
+                .then((data) => {
+                    this.editedItem.$id = data.$id
+                    this.ProductsName.push(this.editedItem)
+                })
+                .catch((err) => { console.log(err) });
+                
+
             }
             this.close()
-            })
-            .catch((err) => { console.log(err) });
+
         },
         initialize() {
             db.listDocuments('dash1', 'ProductsName').then((data) => {

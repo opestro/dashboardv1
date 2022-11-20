@@ -59,7 +59,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeVariation">Cancel</v-btn>
-                                <v-btn color="blue darken-1" text @click="deleteProductsName()">OK</v-btn>
+                                <v-btn color="blue darken-1" text>OK</v-btn>
                                 <v-spacer></v-spacer>
                             </v-card-actions>
                         </v-card>
@@ -91,7 +91,7 @@ export default {
     data() {
         return {
             ProductsName: [],
-            ProductName: [],
+            ProductDetail: [],
             DataName: [],
             DataDetails: [],
             dialog: false,
@@ -153,17 +153,23 @@ export default {
             })
         },
         createProductsName() {
-            db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.editedItem.Name })
-                .then((data) => {
-                    this.editedItem.$id = data.$id
-                    if (this.editedIndex > -1) {
-                        Object.assign(this.ProductsName[this.editedIndex], this.editedItem)
-                    } else {
+            if (this.editedIndex > -1) {
+                Object.assign(this.ProductsName[this.editedIndex], this.editedItem)
+                db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
+                    { Name: this.ProductDetail.Name });
+
+
+            } else {
+                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.editedItem.Name })
+                    .then((data) => {
+                        this.editedItem.$id = data.$id
                         this.ProductsName.push(this.editedItem)
-                    }
-                    this.close()
-                })
-                .catch((err) => { console.log(err) });
+                    })
+                    .catch((err) => { console.log(err) });
+
+
+            }
+            this.close()
         },
         initialize() {
             db.listDocuments('dash1', 'ProductsName').then((data) => {
@@ -173,7 +179,9 @@ export default {
         },
 
         editItem(item) {
+            this.ProductDetail = item
             this.editedIndex = this.ProductsName.indexOf(item)
+            //  console.log(this.ProductDetail)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
         },
