@@ -41,13 +41,13 @@
                                         <div v-for="(Order, index) in addfield" :key="(index)">
                                             <v-row>
                                                 <v-col cols="12">
-                                                    <v-select v-model="newOrder.Item" :items="itemDetails" item-text="Title" item-value="Title"
+                                                    <v-select v-model="newOrder.Item" :items="itemDetails" item-text="Name" item-value="$id"
                                                         label="Select Items" @change="getDetailsColour(newOrder.Item)">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
                                                     <v-select v-model="newOrder.Colour" :item-text="itemDetails.Colour"
-                                                        label="Select Colour" @change="getDetailsSize(newOrder.Colour)">
+                                                        label="Select Colour">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
@@ -205,17 +205,17 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        async getDetailsColour(title) {
-            await db.listDocuments('dash1', 'products').then((data) => {
+        async getDetailsColour(id_) {
+            await db.listDocuments('dash1', 'ProductsDetail').then((data) => {
 
                 const allData = data
-                const Itemtitle = title
-                const rzlt = allData.documents.map(item => ({ Title: item.Title, Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
+                const id = id_
+                const rzlt = data.documents.map(item => ({ id: item.id_, Colour: item.Colour, Size : item.Size })).filter(item => ({id_  :id}))
                 rzlt.forEach(item => {
                     this.itemDetails.push(
                     {
-                        Title : item.Title,
-                        Colour: item.Colours,
+                        Size : item.Size,
+                        Colour: item.Colour,
                     })
 
                 })
@@ -223,7 +223,7 @@ export default {
 
         },
         async getDetailsSize(Colour) {
-            await db.listDocuments('dash1', 'products').then((data) => {
+            await db.listDocuments('dash1', 'ProductsDetail').then((data) => {
             
                 const allData = data
                 const Clr = Colour
@@ -259,7 +259,7 @@ export default {
                 this.orders = rzlt
                 //    console.log(this.orders)
             }),
-                db.listDocuments('dash1', 'products').then((data) => {
+                db.listDocuments('dash1', 'ProductsName').then((data) => {
                     const prdcts = data.documents
                     prdcts.forEach(data => {
                         const items = data
