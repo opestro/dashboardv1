@@ -11,12 +11,10 @@
                     </v-btn>
                     <v-dialog v-model="dialog" max-width="500px" content-class=" rounded-xl">
                         <template v-slot:activator="{ on, attrs }">
-
                         </template>
                         <v-card>
                             <v-card-title class="d-flex justify-space-between">
                                 <span class="text-h5">{{ formTitle }}</span>
-
                             </v-card-title>
                             <v-card-text>
                                 <v-container>
@@ -25,16 +23,12 @@
                                             <v-text-field v-model="ProductDetail.Name" :value="ProductDetail.Name"
                                                 label="Product name"></v-text-field>
                                         </v-col>
-
-                                    </v-row>
-                                    <v-col>
-                                        <v-card-actions class="align-center d-flex justify-end">
+                                        <v-card-actions class="align-center">
                                             <v-btn color="blue darken-1" text @click="addMore()">
                                                 Add Variation
                                             </v-btn>
                                         </v-card-actions>
-                                    </v-col>
-
+                                    </v-row>
                                     <!--==== Edit Variation ====-->
                                     <div v-for="(DataDetail, index) in ProductVariation" :key="(index)">
                                         <v-card outlined class="pa-2 my-2">
@@ -67,11 +61,9 @@
                                                         @click="remove(index, DataDetail, variant = 'old')">
                                                         X
                                                     </v-chip>
-
                                                 </v-col>
                                             </v-row>
                                             <v-row>
-
                                             </v-row>
                                         </v-card>
                                     </div>
@@ -114,11 +106,8 @@
                                         </v-card>
                                     </div>
                                     <!--==== End of Add Variation ====-->
-
-
                                 </v-container>
                             </v-card-text>
-
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="close">
@@ -143,7 +132,6 @@
                                         </v-btn>
                                     </v-card-actions>
                                 </div>
-
                                 <v-row>
                                     <v-col cols="12">
                                         <v-text-field v-model="addfield.Name" label="Product name"></v-text-field>
@@ -176,18 +164,12 @@
                                             </v-col>
                                         </v-row>
                                         <v-row class="align-center mb-3">
-
-
-
                                         </v-row>
                                         <v-row>
-
                                         </v-row>
                                     </v-card>
                                 </div>
-
                                 <v-card-actions>
-
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="close">
                                         Cancel
@@ -196,8 +178,6 @@
                                         Add Order
                                     </v-btn>
                                 </v-card-actions>
-
-
                             </v-container>
                         </v-card>
 
@@ -325,11 +305,11 @@ export default {
                 const rzlt = data.documents
                 rzlt.forEach(element => {
                     const id = element.$id
-                  db.deleteDocument('dash1', 'ProductsDetail', id)
+                    db.deleteDocument('dash1', 'ProductsDetail', id)
                 });
                 this.ProductsName.splice(this.editedIndex, 1)
                 this.closeDelete()
-                db.deleteDocument('dash1', 'ProductsName', _id).then(() => {})
+                db.deleteDocument('dash1', 'ProductsName', _id).then(() => { })
             })
         },
         newProduct() {
@@ -417,9 +397,9 @@ export default {
             this.DataDetails = Object.assign({}, item)
             this.dialogDelete = true
         },
-      /*  addVariation(item) {
-            this.dialogVariation = true
-        }, */
+        /*  addVariation(item) {
+              this.dialogVariation = true
+          }, */
         editVariation(item, DataDetail) {
             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                 Colour: element.Colour,
@@ -431,19 +411,19 @@ export default {
         },
         close() {
             this.dialog = false,
-            this.dialogAddNew = false,
-            this.$nextTick(() => {
-                this.DataDetails = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            })
+                this.dialogAddNew = false,
+                this.$nextTick(() => {
+                    this.DataDetails = Object.assign({}, this.defaultItem)
+                    this.editedIndex = -1
+                })
         },
         closeDelete() {
             this.dialogDelete = false,
-            this.dialogAddNew = false,
-            this.$nextTick(() => {
-                this.DataDetails = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            })
+                this.dialogAddNew = false,
+                this.$nextTick(() => {
+                    this.DataDetails = Object.assign({}, this.defaultItem)
+                    this.editedIndex = -1
+                })
         },
         closeVariation() {
             this.dialogVariation = false
