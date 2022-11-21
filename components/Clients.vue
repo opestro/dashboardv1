@@ -215,12 +215,7 @@ export default {
             db.listDocuments('dash1', 'ProductsDetail', [
                 Query.equal('id_', [id])
             ]).then((data) => {
-
-                //  const allData = data
                 const rzlt = data.documents
-               // console.log(id)
-               // const rzlt = data.documents.map(item => ({ id: item.id_, Colour: item.Colour, Size: item.Size })).filter(item => ({ id_: id }))
-              
                rzlt.forEach(data => {
                 const items = data
                     this.ColourDetail.push(items)
