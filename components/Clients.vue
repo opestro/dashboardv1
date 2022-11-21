@@ -38,26 +38,28 @@
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <div v-for="(Order, index) in addfield" :key="(index)">
+                                        <div v-for="(DataDetail, index) in addfield" :key="(index)">
                                             <v-row>
                                                 <v-col cols="12">
-                                                    <v-select v-model="newOrder.Item" :items="itemDetails" item-text="Name" item-value="$id"
-                                                        label="Select Items" @change="getDetailsColour(newOrder.Item)">
+                                                    <v-select v-model="DataDetail.Name" :items="itemDetails"
+                                                        item-text="Name" item-value="$id" label="Select Items"
+                                                        @change="getDetailsColour(DataDetail.Name)">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
-                                                    <v-select v-model="newOrder.Colour" :item-text="itemDetails.Colour"
-                                                        label="Select Colour">
+                                                    <v-select v-model="DataDetail.Colour" :items="ColourDetail"
+                                                    item-text="Colour" item-value="Colour"
+                                                     label="Select Colour">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
-                                                    <v-select v-model="newOrder.Size" :items="itemDetails.Size"
+                                                    <v-select v-model="DataDetail.Size" :items="itemDetails.Size"
                                                         label="Select Size">
                                                     </v-select>
                                                 </v-col>
                                             </v-row>
                                             <div class="d-flex">
-                                                <v-text-field v-model="newOrder.Qnt" placeholder="Quantity">
+                                                <v-text-field v-model="DataDetail.Quantity" placeholder="Quantity">
                                                 </v-text-field>
                                                 <v-card-subtitle>
                                                     <v-chip class="" color="red" outlined @click="remove(index)"
@@ -123,7 +125,7 @@
     </div>
 </template>
 <script>
-import { db } from "../appwrite.js"
+import { db, Query } from "../appwrite.js"
 export default {
     data() {
         return {
@@ -131,6 +133,7 @@ export default {
                 Item: '',
                 Size: '',
                 Colour: '',
+                Quantity: '',
             }],
             newOrder: [],
             dialog: false,
@@ -168,7 +171,9 @@ export default {
                 Total: 0,
                 Status: 0
             },
-            itemDetails:[]
+            itemDetails: [],
+            ColourDetail: [],
+            SizeDetail: {}
         }
     },
     methods: {
@@ -205,38 +210,38 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        async getDetailsColour(id_) {
-            await db.listDocuments('dash1', 'ProductsDetail').then((data) => {
+        getDetailsColour(id_) {
+            const id = id_
+            db.listDocuments('dash1', 'ProductsDetail', [
+                Query.equal('id_', [id])
+            ]).then((data) => {
 
-                const allData = data
-                const id = id_
-                const rzlt = data.documents.map(item => ({ id: item.id_, Colour: item.Colour, Size : item.Size })).filter(item => ({id_  :id}))
-                rzlt.forEach(item => {
-                    this.itemDetails.push(
-                    {
-                        Size : item.Size,
-                        Colour: item.Colour,
-                    })
-
-                })
+                //  const allData = data
+                const rzlt = data.documents
+               // console.log(id)
+               // const rzlt = data.documents.map(item => ({ id: item.id_, Colour: item.Colour, Size: item.Size })).filter(item => ({ id_: id }))
+              
+               rzlt.forEach(data => {
+                const items = data
+                    this.ColourDetail.push(items)
+               })
+               console.log(this.ColourDetail)
             })
-
         },
         async getDetailsSize(Colour) {
             await db.listDocuments('dash1', 'ProductsDetail').then((data) => {
-            
                 const allData = data
                 const Clr = Colour
                 this.itemDetails.Size = ''
-                const rzlt = allData.documents.map(item => ({Title: item.Title,Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
+                const rzlt = allData.documents.map(item => ({ Title: item.Title, Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
                 rzlt.forEach(item => {
-                    console.log('TT : '+item)
+                    console.log('TT : ' + item)
                     this.itemDetails.push(
-                    {
-                        Title : item.Title,
-                        Colour: item.Colours,
-                        Size: item.Size,
-                    })
+                        {
+                            Title: item.Title,
+                            Colour: item.Colours,
+                            Size: item.Size,
+                        })
                 })
             })
 
@@ -264,10 +269,10 @@ export default {
                     prdcts.forEach(data => {
                         const items = data
                         this.itemDetails.push(items)
-                     
+
 
                     })
-                    console.log( this.itemDetails)
+                    console.log(this.itemDetails)
                 })
         },
 
