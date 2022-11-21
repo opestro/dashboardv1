@@ -222,9 +222,6 @@
                 <v-icon small @click="deleteItem(item)">
                     mdi-delete
                 </v-icon>
-                <v-icon small class="ml-2" @click="addVariation(item)">
-                    mdi-eye-settings
-                </v-icon>
             </template>
             <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">
@@ -320,28 +317,20 @@ export default {
                 this.addfield.splice(index, 1)
             }
         },
-        deleteProductsDetail() {
-
-        },
         deleteProductsName() {
             const _id = this.ProductsID
-            console.log(_id)
             db.listDocuments('dash1', 'ProductsDetail', [
                 Query.equal('id_', [_id])
             ]).then((data) => {
                 const rzlt = data.documents
                 rzlt.forEach(element => {
                     const id = element.$id
-                   // console.log(element.$id)
                   db.deleteDocument('dash1', 'ProductsDetail', id)
                 });
                 this.ProductsName.splice(this.editedIndex, 1)
                 this.closeDelete()
                 db.deleteDocument('dash1', 'ProductsName', _id).then(() => {})
-
             })
-
-
         },
         newProduct() {
             this.addfield.push({
@@ -356,8 +345,6 @@ export default {
         },
         saveVariation(index) {
             const element = this.addfield.at(index)
-            //  this.addfield.forEach( element => {
-            console.log(element)
             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                 Colour: element.Colour,
                 Size: element.Size,
@@ -373,53 +360,42 @@ export default {
                     Price: element.Price,
                     $id: element.$id
                 });
-
-            }).catch((err) => { console.log(err) })
-            //  });
-            //   console.log(test)
-            //  console.log(this.ProductDetail)
+            }).catch((err) => { alert(err) })
         },
         createProductsName(item) {
             this.ProductDetail.Name = item
-            console.log(this.ProductDetail)
             if (this.editedIndex > -1) {
                 Object.assign(this.ProductsName[this.editedIndex], this.ProductDetail)
                 db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
                     { Name: this.ProductDetail.Name });
             } else {
-                //console.log(this.DataDetails)
                 db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.addfield.Name })
                     .then((data) => {
                         const _id = data.$id
                         this.addfield.forEach(element => {
-                            console.log(element)
                             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                                 Colour: element.Colour,
                                 Size: element.Size,
                                 Quantity: element.Quantity,
                                 Price: element.Price,
                                 id_: _id
-                            }).catch((err) => { console.log(err) })
+                            }).catch((err) => { alert(err) })
                         });
                         this.DataDetails = data
                         this.ProductsName.push(this.DataDetails)
                     })
-                    .catch((err) => { console.log(err) });
-                console.log(this.addfield)
+                    .catch((err) => { alert(err) });
             }
             this.close()
         },
         initialize() {
             db.listDocuments('dash1', 'ProductsName').then((data) => {
                 this.ProductsName = data.documents
-
             })
         },
-
         editItem(item, DataDetail) {
             this.ProductDetail = item
             this.editedIndex = this.ProductsName.indexOf(item)
-            //console.log(this.ProductDetail)
             this.DataDetails = Object.assign({}, item)
             this.ProductVariation = []
             db.listDocuments('dash1', 'ProductsDetail', [
@@ -428,14 +404,11 @@ export default {
                 const rzlt = data.documents
                 rzlt.forEach(data => {
                     const items = data
-
                     this.ProductVariation.push(items)
                 })
-                console.log(rzlt)
             })
             this.addfield = []
             this.dialog = true
-
         },
 
         deleteItem(item) {
@@ -444,22 +417,17 @@ export default {
             this.DataDetails = Object.assign({}, item)
             this.dialogDelete = true
         },
-        addVariation(item) {
-            console.log(item)
-            // this.ProductsID = item.$id
-            //   this.editedIndex = this.ProductsName.indexOf(item)
-            //  this.DataDetails = Object.assign({}, item)
+      /*  addVariation(item) {
             this.dialogVariation = true
-        },
+        }, */
         editVariation(item, DataDetail) {
-            console.log(DataDetail)
             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                 Colour: element.Colour,
                 Size: element.Size,
                 Quantity: element.Quantity,
                 Price: element.Price,
                 id_: _id
-            }).catch((err) => { console.log(err) })
+            }).catch((err) => { alert(err) })
         },
         close() {
             this.dialog = false,
@@ -469,7 +437,6 @@ export default {
                 this.editedIndex = -1
             })
         },
-
         closeDelete() {
             this.dialogDelete = false,
             this.dialogAddNew = false,
