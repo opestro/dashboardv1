@@ -39,36 +39,41 @@
                                     </v-row>
                                     <v-row>
                                         <div v-for="(DataDetail, index) in addfield" :key="(index)">
-                                            <v-row>
-                                                <v-col cols="12">
-                                                    <v-select v-model="DataDetail.Name" :items="itemDetails"
-                                                        item-text="Name" item-value="$id" label="Select Items"
-                                                        @change="getDetails(DataDetail.Name, detail='Colour')">
-                                                    </v-select>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="6">
-                                                    <v-select v-model="DataDetail.Colour" :items="ColourDetail"
-                                                    item-text="Colour" item-value="Colour"
-                                                     label="Select Colour"  @change="getDetails(DataDetail.Colour, detail = 'Size')">
-                                                    </v-select>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="6">
-                                                    <v-select v-model="DataDetail.Size" :items="SizeDetail"
-                                                    item-text="Size" item-value="$id"  label="Select Size" @change="getDetails(DataDetail.Size)">
-                                                    </v-select>
-                                                </v-col>
-                                            </v-row>
-                                            <div class="d-flex">
-                                                <v-text-field v-model="DataDetail.Quantity" :items="Quantity"
-                                                    item-text="Quantity" item-value="$id" disabled :placeholder="Quantity">
-                                                </v-text-field>
-                                                <v-card-subtitle>
-                                                    <v-chip class="" color="red" outlined @click="remove(index)"
-                                                        v-show="index != 0"> Delete
-                                                        X
-                                                    </v-chip>
-                                                </v-card-subtitle>
-                                            </div>
+                                            <v-card outlined class="pa-2 my-2">
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Name" :items="itemDetails"
+                                                            item-text="Name" item-value="$id" label="Select Items"
+                                                            @change="getDetails(DataDetail.Name, detail = 'Colour', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Colour" :items="ColourDetail"
+                                                            item-text="Colour" item-value="Colour" label="Select Colour"
+                                                            @change="getDetails(DataDetail.Colour, detail = 'Size', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Size" :items="SizeDetail"
+                                                            item-text="Size" item-value="$id" label="Select Size"
+                                                            @change="getDetails(DataDetail.Size, index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <div class="d-flex">
+                                                    <v-text-field v-model="DataDetail.Quantity" :items="Quantity"
+                                                        item-text="Quantity" item-value="$id" disabled
+                                                        :placeholder="Quantity">
+                                                    </v-text-field>
+                                                    <v-card-subtitle>
+                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                            v-show="index != 0"> Delete
+                                                            X
+                                                        </v-chip>
+                                                    </v-card-subtitle>
+                                                </div>
+                                            </v-card>
                                         </div>
                                         <v-col cols="12" sm="6" md="6">
                                             <v-text-field v-model="newOrder.Shipping" label="Shiping">
@@ -175,7 +180,7 @@ export default {
             itemDetails: [],
             ColourDetail: [],
             SizeDetail: [],
-            Quantity : {},
+            Quantity: 'Quantity : 0',
         }
     },
     methods: {
@@ -212,49 +217,62 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        getDetails(data, detail) {
-            
+        getDetails(data, detail, index) {
+
             if (detail == 'Colour') {
-                this.ColourDetail = []
+                //     this.ColourDetail = []
                 const id = data
-            db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
-                const rzlt = data.documents
-               rzlt.forEach(data => {
-                const items = data
-                    this.ColourDetail.push(items)
-               })
-               console.log(this.ColourDetail)
-            })
-            } else if(detail == 'Size'){
+                const i = index
+                this.ColourDetail.filter((e) => (e.index === i)).forEach(element => {
+                    this.ColourDetail.splice(element)
+                });
+                
+                console.log( this.ColourDetail)
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
+                    const rzlt = data.documents
+                    rzlt.forEach(data => {
+                        const items = data
+
+                        //this.ColourDetail.findIndex(e=> e.key = index, this.ColourDetail.push({key : index, ...items}))
+                        // this.ColourDetail.findIndex(e=> e.key = index, this.ColourDetail.push({key : index, ...items}))
+                        this.ColourDetail.push({index, ...items} )
+                        //  this.ColourDetail.push({key : index, ...items})
+                    })
+                    // console.log(this.ColourDetail)
+                })
+            } else if (detail == 'Size') {
                 console.log(data)
                 const colour = data
-               
+                const id = data
+
                 db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [colour])]).then((data) => {
-                
+
                     const rzlt = data.documents
-                    this.SizeDetail= []
-                rzlt.forEach(data => {
-                    //console.log('TT : ' + item)
-                    const item = data
-                    
-                  //  console.log(data)
-                    this.SizeDetail.push(item)
+                    this.SizeDetail.forEach(data => {
+                        this.SizeDetail.splice(this.SizeDetail.findIndex(e => e.id_ = id))
+                    })
+                    //   this.SizeDetail = []
+                    rzlt.forEach(data => {
+                        //console.log('TT : ' + item)
+                        const item = data
+                        //  console.log(data)
+                        this.SizeDetail.push(item)
+                    })
                 })
-            })
             } else {
                 const id = data
                 console.log(id)
-               db.listDocuments('dash1', 'ProductsDetail', [Query.equal('$id', [id])]).then((data)=>{
-                this.Quantity = data.documents[0].Quantity
-                console.log(this.Quantity)
-                
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('$id', [id])]).then((data) => {
+                    this.Quantity = 'Quantity : ' + data.documents[0].Quantity
+                    console.log(this.Quantity)
+
 
                 })
             }
-            
+
         },
         getDetailsSize(Colour) {
-           
+
         },
         // function to delete order
         deleteClient(data) {
