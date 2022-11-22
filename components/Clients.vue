@@ -43,23 +43,24 @@
                                                 <v-col cols="12">
                                                     <v-select v-model="DataDetail.Name" :items="itemDetails"
                                                         item-text="Name" item-value="$id" label="Select Items"
-                                                        @change="getDetailsColour(DataDetail.Name)">
+                                                        @change="getDetails(DataDetail.Name, detail='Colour')">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
                                                     <v-select v-model="DataDetail.Colour" :items="ColourDetail"
                                                     item-text="Colour" item-value="Colour"
-                                                     label="Select Colour">
+                                                     label="Select Colour"  @change="getDetails(DataDetail.Colour, detail = 'Size')">
                                                     </v-select>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="6">
-                                                    <v-select v-model="DataDetail.Size" :items="itemDetails.Size"
-                                                        label="Select Size">
+                                                    <v-select v-model="DataDetail.Size" :items="SizeDetail"
+                                                    item-text="Size" item-value="$id"  label="Select Size" @change="getDetails(DataDetail.Size)">
                                                     </v-select>
                                                 </v-col>
                                             </v-row>
                                             <div class="d-flex">
-                                                <v-text-field v-model="DataDetail.Quantity" placeholder="Quantity">
+                                                <v-text-field v-model="DataDetail.Quantity" :items="Quantity"
+                                                    item-text="Quantity" item-value="$id" disabled :placeholder="Quantity">
                                                 </v-text-field>
                                                 <v-card-subtitle>
                                                     <v-chip class="" color="red" outlined @click="remove(index)"
@@ -173,7 +174,8 @@ export default {
             },
             itemDetails: [],
             ColourDetail: [],
-            SizeDetail: {}
+            SizeDetail: [],
+            Quantity : {},
         }
     },
     methods: {
@@ -210,11 +212,12 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        getDetailsColour(id_) {
-            const id = id_
-            db.listDocuments('dash1', 'ProductsDetail', [
-                Query.equal('id_', [id])
-            ]).then((data) => {
+        getDetails(data, detail) {
+            
+            if (detail == 'Colour') {
+                this.ColourDetail = []
+                const id = data
+            db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
                 const rzlt = data.documents
                rzlt.forEach(data => {
                 const items = data
@@ -222,24 +225,36 @@ export default {
                })
                console.log(this.ColourDetail)
             })
-        },
-        async getDetailsSize(Colour) {
-            await db.listDocuments('dash1', 'ProductsDetail').then((data) => {
-                const allData = data
-                const Clr = Colour
-                this.itemDetails.Size = ''
-                const rzlt = allData.documents.map(item => ({ Title: item.Title, Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
-                rzlt.forEach(item => {
-                    console.log('TT : ' + item)
-                    this.itemDetails.push(
-                        {
-                            Title: item.Title,
-                            Colour: item.Colours,
-                            Size: item.Size,
-                        })
+            } else if(detail == 'Size'){
+                console.log(data)
+                const colour = data
+               
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [colour])]).then((data) => {
+                
+                    const rzlt = data.documents
+                    this.SizeDetail= []
+                rzlt.forEach(data => {
+                    //console.log('TT : ' + item)
+                    const item = data
+                    
+                  //  console.log(data)
+                    this.SizeDetail.push(item)
                 })
             })
+            } else {
+                const id = data
+                console.log(id)
+               db.listDocuments('dash1', 'ProductsDetail', [Query.equal('$id', [id])]).then((data)=>{
+                this.Quantity = data.documents[0].Quantity
+                console.log(this.Quantity)
+                
 
+                })
+            }
+            
+        },
+        getDetailsSize(Colour) {
+           
         },
         // function to delete order
         deleteClient(data) {
