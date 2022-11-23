@@ -211,7 +211,7 @@ export default {
                       "Address": this.addfield.Address,
                       "Wilaya": this.addfield.Wilaya,
                       "PhoneNumber": this.addfield.PhoneNumber,
-                      "Items": detail,
+                      "Items": detail ,
                       "Shiping": this.addfield.Shipping,
                       "Total": this.addfield.Total,
                       "Status": "Processing"
