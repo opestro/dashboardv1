@@ -401,12 +401,13 @@ export default {
               this.dialogVariation = true
           }, */
         editVariation(item, DataDetail) {
-            db.updateDocument('dash1', 'ProductsDetail', 'unique()', {
+            console.log(DataDetail)
+            db.updateDocument('dash1', 'ProductsDetail', DataDetail.$id, {
                 Colour: DataDetail.Colour,
                 Size: DataDetail.Size,
                 Quantity: DataDetail.Quantity,
                 Price: DataDetail.Price,
-                id_: _id
+               // id_: _id
             }).catch((err) => { alert(err) })
         },
         close() {

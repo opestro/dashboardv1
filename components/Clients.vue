@@ -65,7 +65,9 @@
                                                 <div class="d-flex">
                                                     <v-card-text>Quantity :
                                                     </v-card-text>
-                                                    <v-card-subtitle v-model="addfield.Quantity" v-for="qntt in Quantity[index]" :key="qntt">{{qntt.Quantity}}</v-card-subtitle>
+                                                    <v-card-subtitle v-model="addfield.Quantity"
+                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
+                                                    </v-card-subtitle>
 
                                                     <v-card-subtitle>
                                                         <v-chip class="" color="red" outlined @click="remove(index)"
@@ -146,7 +148,7 @@ export default {
                 Wilaya: '',
                 PhoneNumber: 0,
                 Total: 0,
-                Shipping :'',
+                Shipping: '',
                 Status: 0
             }],
             newOrder: [],
@@ -188,7 +190,7 @@ export default {
             itemDetails: [],
             ColourDetail: [],
             SizeDetail: [],
-            Quantity: [{0: { Quantity : 0}}],
+            Quantity: [{ 0: { Quantity: 0 } }],
             changedData: ''
         }
     },
@@ -196,49 +198,42 @@ export default {
         // function to Create a new Order
         AddNewClient() {
             console.log(this.addfield)
-            this.addfield.forEach(element => {
-                const name = element.Name
-                const colour = element.Colour
-                const size = element.Size
-                console.log(name)
-                db.listDocuments('dash1', 'ProductsName', [Query.equal('$id', [name])])
-            .then((data) => {
-                const detail = data.documents[0].Name + ' - ' + colour + ' - ' + size
-                console.log(detail)
-                db.createDocument('dash1', 'orders', "unique()",
-                  {
-                      "FullName": this.addfield.Fullname,
-                      "Address": this.addfield.Address,
-                      "Wilaya": this.addfield.Wilaya,
-                      "PhoneNumber": this.addfield.PhoneNumber,
-                      "Items": detail ,
-                      "Shiping": this.addfield.Shipping,
-                      "Total": this.addfield.Total,
-                      "Status": "Processing"
-                  }).then((data) => {
-                      //console.log(data)
-                  }).catch((err) => { alert(err) })
+            db.createDocument('dash1', 'orders', "unique()",
+                {
+                    "FullName": this.addfield.Fullname,
+                    "Address": this.addfield.Address,
+                    "Wilaya": this.addfield.Wilaya,
+                    "PhoneNumber": this.addfield.PhoneNumber,
+                    "Shiping": this.addfield.Shipping,
+                    "Total": this.addfield.Total,
+                    "Status": "Processing"
+                }).then((id) => {
+                    console.log(id)
+                    const id_ = id.$id
+                    this.addfield.forEach(element => {
+                        const name = element.Name
+                        const colour = element.Colour
+                        const size = element.Size
+                        console.log(name)
+                        db.listDocuments('dash1', 'ProductsName', [Query.equal('$id', [name])])
+                            .then((data) => {
+                                const detail = data.documents[0].Name
+                                //  console.log(detail)
+                                db.createDocument('dash1', 'ordersDetail', "unique()",
+                                    {
+                                        "id_": id_,
+                                        "Colour": colour,
+                                        "Size": size,
+                                        "Item": detail,
+                                    })
 
-            })
-            });
-
-            /*  db.createDocument('dash1', 'orders', "unique()",
-                  {
-                      "FullName": this.data.Full_Name,
-                      "Address": this.data.Address,
-                      "Wilaya": this.data.Wilaya,
-                      "PhoneNumber": this.data.Phone,
-                      "Items": this.data.Items,
-                      "Shiping": this.data.Shiping,
-                      "Total": this.data.Total,
-                      "Status": "Processing"
-                  }).then((data) => {
-                      //console.log(data)
-                  }).catch((err) => { alert(err) }) */
-              this.AddNew = false
-              this.Done = true
-              this.ShowClient = false
-              this.ShowClient = true
+                            })
+                    })
+                }).catch((err) => { alert(err) })
+            this.AddNew = false
+            this.Done = true
+            this.ShowClient = false
+            this.ShowClient = true
 
         },
         addMore() {
@@ -259,9 +254,9 @@ export default {
                 //     this.ColourDetail = []
                 const id = data
                 const i = index
-             //   this.ColourDetail[index] = this.ColourDetail[index] || [];
-               //var ColourDetail = this.ColourDetail[index];
-             //   console.log(this.ColourDetail)
+                //   this.ColourDetail[index] = this.ColourDetail[index] || [];
+                //var ColourDetail = this.ColourDetail[index];
+                //   console.log(this.ColourDetail)
                 db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
                     const rzlt = data.documents
                     this.ColourDetail[index] = [...rzlt];
@@ -287,8 +282,8 @@ export default {
                 db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [this.changedData]), Query.equal('Size', [Size])]).then((data) => {
                     const rzlt = data.documents
                     //this.Quantity = rzlt
-                       this.Quantity[index] = [...rzlt];
-                       this.Quantity = [...this.Quantity];
+                    this.Quantity[index] = [...rzlt];
+                    this.Quantity = [...this.Quantity];
                     console.log(this.Quantity)
                     //8     console.log(this.Quantity)
 
@@ -297,15 +292,21 @@ export default {
             }
 
         },
-        getDetailsSize(Colour) {
-
-        },
         // function to delete order
         deleteClient(data) {
-            db.deleteDocument('dash1', 'orders', data.$id).then(() => {
+            const idd = data
+            db.listDocuments('dash1', 'ordersDetail', [
+                Query.equal('id_', [data.$id])
+            ]).then((data) => {
+                const rzlt = data.documents
+                rzlt.forEach(element => {
+                    const id = element.$id
+                    db.deleteDocument('dash1', 'ordersDetail', id)
+                });
                 this.editedIndex = this.orders.indexOf(data)
                 this.editedItem = Object.assign({}, data)
                 this.dialogDelete = true
+                db.deleteDocument('dash1', 'orders', idd.$id)
             })
             console.log(data.$id)
 
