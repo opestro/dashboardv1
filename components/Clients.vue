@@ -104,6 +104,101 @@
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
+
+                    <!--==ddddddddddddddddddddd==-->
+                    <v-dialog v-model="dialogEdit" max-width="500px">
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">Edit order</span>
+                            </v-card-title>
+
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Fullname" label="Full Name"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Address" label="Address"></v-text-field>
+                                        </v-col>
+
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Wilaya" label="Wilaya"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.PhoneNumber" label="Phone Number">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <div v-for="(DataDetail, index) in ordersDetail" :key="(index)">
+                                            <v-card outlined class="pa-2 my-2">
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Name" :items="ordersDetail"
+                                                            item-text="Colour" item-value="Colour" label="Select Items">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Colour" :items="ordersDetail"
+                                                            item-text="Colour" item-value="Colour" label="Select Colour"
+                                                            @change="getDetails(DataDetail.Colour, detail = 'Size', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Size" :items="SizeDetail[index]"
+                                                            item-text="Size" item-value="Size" label="Select Size"
+                                                            @change="getDetails(DataDetail.Size, '', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <div class="d-flex">
+                                                    <v-card-text>Quantity :
+                                                    </v-card-text>
+                                                    <v-card-subtitle v-model="DataDetail.Quantity"
+                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
+                                                    </v-card-subtitle>
+
+                                                    <v-card-subtitle>
+                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                            v-show="index != 0"> Delete
+                                                            X
+                                                        </v-chip>
+                                                    </v-card-subtitle>
+                                                </div>
+                                            </v-card>
+                                        </div>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Shipping" label="Shiping">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Total" label="Total">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-btn color="blue darken-1" text @click="addMore()">
+                                    Add Variation
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close">
+                                    Cancel
+                                </v-btn>
+                                <v-btn color="blue darken-1" text @click="AddNewClient()">
+                                    Add Order
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <!--==ddddddddddddddddddddd==-->
                     <v-dialog v-model="dialogDelete" max-width="500px">
                         <v-card>
                             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -138,6 +233,7 @@ import { db, Query } from "../appwrite.js"
 export default {
     data() {
         return {
+            dialogEdit: false,
             addfield: [{
                 Item: '',
                 Size: '',
@@ -191,7 +287,8 @@ export default {
             ColourDetail: [],
             SizeDetail: [],
             Quantity: [{ 0: { Quantity: 0 } }],
-            changedData: ''
+            changedData: '',
+            ordersDetail: [],
         }
     },
     methods: {
@@ -243,6 +340,7 @@ export default {
                 Colour: '',
             });
         },
+
         // function to remove variations 
         remove(index) {
             this.Orders.splice(index, 1);
@@ -255,7 +353,7 @@ export default {
                 const id = data
                 const i = index
                 //   this.ColourDetail[index] = this.ColourDetail[index] || [];
-                //var ColourDetail = this.ColourDetail[index];
+                //    var ColourDetail = this.ColourDetail[index];
                 //   console.log(this.ColourDetail)
                 db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
                     const rzlt = data.documents
@@ -332,17 +430,25 @@ export default {
         },
 
         editItem(item) {
-            this.editedIndex = this.desserts.indexOf(item)
-            this.editedItem = Object.assign({}, item)
-            this.dialog = true
+            this.editedIndex = this.orders.indexOf(item)
+            this.ordersDetail = Object.assign({}, item)
+            db.listDocuments('dash1', 'OrdersDetail', [
+                Query.equal('id_', [item.$id])
+            ]).then((data) => {
+                const rzlt = data.documents
+                console.log(rzlt)
+                rzlt.forEach(data => {
+                    const items = data
+                    this.ordersDetail.push(items)
+                })
+            })
+            this.dialogEdit = true
         },
-
         deleteItem(item) {
             this.editedIndex = this.desserts.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialogDelete = true
         },
-
         deleteItemConfirm() {
             this.orders.splice(this.editedIndex, 1)
             this.closeDelete()
@@ -395,8 +501,5 @@ export default {
     created() {
         this.initialize()
     },
-
-
-
 }
 </script>

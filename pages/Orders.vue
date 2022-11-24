@@ -1,127 +1,331 @@
 <template>
-    <div>
-        <v-card
-            class="d-xs-block d-sm-flex flex-wrap align-xs-content-center align-center justify-xs-center justify-sm-space-between rounded-xl"
-            elevation="0">
-            <v-col cols="6">
-                <v-card-title>Data Table</v-card-title>
-            </v-col>
-            <v-col class=" d-flex justify-xs-center justify-sm-end " cols="6">
+    <div class="">
+        <v-data-table :headers="headers" :items="orders" sort-by="calories" class="rounded-xl elevation-1">
+            <template v-slot:top>
+                <v-toolbar flat class="rounded-xl">
+                    <v-toolbar-title>Orders</v-toolbar-title>
+                    <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-dialog v-model="dialog" max-width="500px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn color="primary" dark class="mb-2 rounded-xl" v-bind="attrs" v-on="on">
+                                New Item
+                            </v-btn>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">{{ formTitle }}</span>
+                            </v-card-title>
 
-                <v-btn v-show="AddNew == false" @click="ShowIf()" class=" rounded-xl white--text blue" outlined>
-                    Add
-                    new
-                    client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNewClient()" class="green white--text mx-2 rounded-xl " outlined>Add
-                    Client</v-btn>
-                <v-btn v-show="AddNew" @click="AddNew = !AddNew" class=" rounded-xl red white--text" outlined>
-                    Close
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.Fullname" label="Full Name"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.Address" label="Address"></v-text-field>
+                                        </v-col>
+
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.Wilaya" label="Wilaya"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.PhoneNumber" label="Phone Number">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <div v-for="(DataDetail, index) in addfield" :key="(index)">
+                                            <v-card outlined class="pa-2 my-2">
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Name" :items="itemDetails"
+                                                            item-text="Name" item-value="$id" label="Select Items"
+                                                            @change="getDetails(DataDetail.Name, 'Colour', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Colour"
+                                                            :items="ColourDetail[index]" item-text="Colour"
+                                                            item-value="Colour" label="Select Colour"
+                                                            @change="getDetails(DataDetail.Colour, detail = 'Size', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Size" :items="SizeDetail[index]"
+                                                            item-text="Size" item-value="Size" label="Select Size"
+                                                            @change="getDetails(DataDetail.Size, '', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <div class="d-flex">
+                                                    <v-card-text>Quantity :
+                                                    </v-card-text>
+                                                    <v-card-subtitle v-model="addfield.Quantity"
+                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
+                                                    </v-card-subtitle>
+
+                                                    <v-card-subtitle>
+                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                            v-show="index != 0"> Delete
+                                                            X
+                                                        </v-chip>
+                                                    </v-card-subtitle>
+                                                </div>
+                                            </v-card>
+                                        </div>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.Shipping" label="Shiping">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="addfield.Total" label="Total">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-btn color="blue darken-1" text @click="addMore()">
+                                    Add Variation
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close">
+                                    Cancel
+                                </v-btn>
+                                <v-btn color="blue darken-1" text @click="AddNewClient()">
+                                    Add Order
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <!--==ddddddddddddddddddddd==-->
+                    <v-dialog v-model="dialogEdit" max-width="500px">
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">Edit order</span>
+                            </v-card-title>
+
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Fullname" label="Full Name"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Address" label="Address"></v-text-field>
+                                        </v-col>
+
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Wilaya" label="Wilaya"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.PhoneNumber" label="Phone Number">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <div v-for="(DataDetail, index) in ordersDetail" :key="(index)">
+                                            <v-card outlined class="pa-2 my-2">
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Name" :items="ordersDetail"
+                                                            item-text="Colour" item-value="Colour" label="Select Items">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Colour" :items="ordersDetail"
+                                                            item-text="Colour" item-value="Colour" label="Select Colour"
+                                                            @change="getDetails(DataDetail.Colour, detail = 'Size', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-select v-model="DataDetail.Size" :items="SizeDetail[index]"
+                                                            item-text="Size" item-value="Size" label="Select Size"
+                                                            @change="getDetails(DataDetail.Size, '', index)">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <div class="d-flex">
+                                                    <v-card-text>Quantity :
+                                                    </v-card-text>
+                                                    <v-card-subtitle v-model="DataDetail.Quantity"
+                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
+                                                    </v-card-subtitle>
+
+                                                    <v-card-subtitle>
+                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                            v-show="index != 0"> Delete
+                                                            X
+                                                        </v-chip>
+                                                    </v-card-subtitle>
+                                                </div>
+                                            </v-card>
+                                        </div>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Shipping" label="Shiping">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-text-field v-model="orders.Total" label="Total">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-btn color="blue darken-1" text @click="addMore()">
+                                    Add Variation
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close">
+                                    Cancel
+                                </v-btn>
+                                <v-btn color="blue darken-1" text @click="AddNewClient()">
+                                    Add Order
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <!--==ddddddddddddddddddddd==-->
+                    <v-dialog v-model="dialogDelete" max-width="500px">
+                        <v-card>
+                            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                                <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+                <v-icon small class="mr-2" @click="editItem(item)">
+                    mdi-pencil
+                </v-icon>
+                <v-icon small @click="deleteClient(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
+            <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">
+                    Reset
                 </v-btn>
-
-            </v-col>
-
-        </v-card>
-        <v-card class="my-2 green d-flex justify-center rounded-xl white--text" elevation="5" v-if="Done">
-            <v-card-title class="">
-                Your client has been added
-            </v-card-title>
-        </v-card>
-        <v-card v-show="AddNew" class="my-2 pa-2 rounded-xl " elevation="5" outlined>
-            <v-card-title>
-                Add New Client
-            </v-card-title>
-            <v-card-subtitle class="d-md-flex d-sm-block ">
-                <v-col sm="12" md="6">
-                    <v-text-field class="text-caption" v-model="data.Full_Name" label="Full name">Full Name
-                    </v-text-field>
-                    <v-text-field class="text-caption" v-model="data.Address" label="Address">Address</v-text-field>
-                    <v-text-field class="text-caption" v-model="data.Wilaya" label="Wilaya">Wilaya</v-text-field>
-                    <v-text-field class="text-caption" v-model="data.Phone" label="Phone number">Phone number
-                    </v-text-field>
-                </v-col>
-                <v-col sm="12" md="6">
-                    <div v-for="(Order, index) in Orders" :key="(index)">
-                        <div class="d-flex">
-                            <v-select v-model="Order.Item" :items="ProductTitles" label="Select Items"
-                                @change="getDetailsColour(Order.Item)">
-                            </v-select>
-                            <v-select v-model="Order.Colour" :items="detailsColour" label="Select Size"
-                                @change="getDetailsSize(Order.Colour)">
-                            </v-select>
-                            <v-select v-model="Order.Size" :items="detailsSize" label="Select Size">
-                            </v-select>
-                        </div>
-                        <div class="d-flex">
-                            <v-text-field v-model="Order.Qnt" placeholder="Quantity"></v-text-field>
-                            <v-chip class="mx-2 my-1" color="red" outlined @click="remove(index)" v-show="index != 0">
-                                X
-                            </v-chip>
-                        </div>
-                    </div>
-                    <v-btn class="ml-2 rounded-xl white--text px-3 py-2 blue text-white" outlined elevation="0"
-                        @click="addMore()">
-                        Add Item
-                    </v-btn>
-                    <v-text-field class="text-caption" v-model="data.Shiping" label="Shiping">Shiping</v-text-field>
-                    <v-text-field class="text-caption" v-model="data.Total" label="Total">Total</v-text-field>
-                </v-col>
-            </v-card-subtitle>
-        </v-card>
-        <v-spacer class="py-2"></v-spacer>
-        <v-card class="rounded-xl" elevation="5">
-            <clients v-if="ShowClient"></clients>
-        </v-card>
-
+            </template>
+        </v-data-table>
     </div>
 </template>
 <script>
-import Clients from '../components/Clients.vue';
-import { ID, account, db, Permission, Role } from "../appwrite.js";
+import { db, Query } from "../appwrite.js"
 export default {
-    components: { Clients },
-    name: 'DataTable',
-
     data() {
         return {
-            AddNew: false,
-            data: [],
-            Done: false,
-            ShowClient: true,
-            ProductTitles: [],
-            Products: [],
-            Orders: [
+            dialogEdit: false,
+            addfield: [{
+                Item: '',
+                Size: '',
+                Colour: '',
+                Quantity: '',
+                id: '',
+                Name: '',
+                Wilaya: '',
+                PhoneNumber: 0,
+                Total: 0,
+                Shipping: '',
+                Status: 0
+            }],
+            newOrder: [],
+            dialog: false,
+            dialogDelete: false,
+            headers: [
                 {
-                    Item: '',
-                    Colour: '',
-                    Size: '',
-                    Qnt: '',
-                }
+                    text: 'ID',
+                    align: 'start',
+                    sortable: false,
+                    value: '$id',
+                },
+                { text: 'Full Name', value: 'FullName' },
+                { text: 'Wilaya', value: 'Wilaya' },
+                { text: 'Phone Number', value: 'PhoneNumber' },
+                { text: 'Total', value: 'Total' },
+                { text: 'Status', value: 'Status' },
+
+                { text: 'Actions', value: 'actions', sortable: false },
             ],
-            allData: '',
-            detailsColour: [],
-            detailsSize: [],
-            detailsStock: [],
+            orders: [],
+            editedIndex: -1,
+            editedItem: {
+                id: '',
+                FullName: 0,
+                Wilaya: 0,
+                PhoneNumber: 0,
+                Total: 0,
+                Status: 0
+            },
+            defaultItem: {
+                id: '',
+                FullName: 0,
+                Wilaya: 0,
+                PhoneNumber: 0,
+                Total: 0,
+                Status: 0
+            },
+            itemDetails: [],
+            ColourDetail: [],
+            SizeDetail: [],
+            Quantity: [{ 0: { Quantity: 0 } }],
+            changedData: '',
+            ordersDetail: [],
         }
     },
     methods: {
-        ShowIf() {
-            this.AddNew = true
-            this.Done = false
-        },
         // function to Create a new Order
         AddNewClient() {
+            console.log(this.addfield)
             db.createDocument('dash1', 'orders', "unique()",
                 {
-                    "FullName": this.data.Full_Name,
-                    "Address": this.data.Address,
-                    "Wilaya": this.data.Wilaya,
-                    "PhoneNumber": this.data.Phone,
-                    "Items": this.data.Items,
-                    "Shiping": this.data.Shiping,
-                    "Total": this.data.Total,
+                    "FullName": this.addfield.Fullname,
+                    "Address": this.addfield.Address,
+                    "Wilaya": this.addfield.Wilaya,
+                    "PhoneNumber": this.addfield.PhoneNumber,
+                    "Shiping": this.addfield.Shipping,
+                    "Total": this.addfield.Total,
                     "Status": "Processing"
-                }).then((data) => {
-                    //console.log(data)
+                }).then((id) => {
+                    console.log(id)
+                    const id_ = id.$id
+                    this.addfield.forEach(element => {
+                        const name = element.Name
+                        const colour = element.Colour
+                        const size = element.Size
+                        console.log(name)
+                        db.listDocuments('dash1', 'ProductsName', [Query.equal('$id', [name])])
+                            .then((data) => {
+                                const detail = data.documents[0].Name
+                                //  console.log(detail)
+                                db.createDocument('dash1', 'ordersDetail', "unique()",
+                                    {
+                                        "id_": id_,
+                                        "Colour": colour,
+                                        "Size": size,
+                                        "Item": detail,
+                                    })
+
+                            })
+                    })
                 }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
@@ -130,93 +334,172 @@ export default {
 
         },
         addMore() {
-            this.Orders.push({
-
-                name: '',
-                _id: '',
-
+            this.addfield.push({
+                Item: '',
+                Size: '',
+                Colour: '',
             });
         },
+
         // function to remove variations 
         remove(index) {
             this.Orders.splice(index, 1);
         },
-        async getDetailsColour(title) {
-            await db.listDocuments('dash1', 'products').then((data) => {
-                this.allData = data;
+        getDetails(data, detail, index) {
+
+            if (detail == 'Colour') {
+                this.ColourDetail[index] = []
+                //     this.ColourDetail = []
+                const id = data
+                const i = index
+                //   this.ColourDetail[index] = this.ColourDetail[index] || [];
+                //    var ColourDetail = this.ColourDetail[index];
+                //   console.log(this.ColourDetail)
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
+                    const rzlt = data.documents
+                    this.ColourDetail[index] = [...rzlt];
+                    this.ColourDetail = [...this.ColourDetail];
+                })
+            } else if (detail == 'Size') {
+                this.SizeDetail[index] = []
+                const colour = data
+                const id = data
+                this.changedData = data
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [colour])]).then((data) => {
+                    const rzlt = data.documents
+                    this.SizeDetail[index] = [...rzlt];
+                    this.SizeDetail = [...this.SizeDetail];
+
+
+                })
+            } else {
+                const Size = data
+                // console.log(id)
+
+                this.Quantity[index] = []
+                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [this.changedData]), Query.equal('Size', [Size])]).then((data) => {
+                    const rzlt = data.documents
+                    //this.Quantity = rzlt
+                    this.Quantity[index] = [...rzlt];
+                    this.Quantity = [...this.Quantity];
+                    console.log(this.Quantity)
+                    //8     console.log(this.Quantity)
+
+
+                })
+            }
+
+        },
+        // function to delete order
+        deleteClient(data) {
+            const idd = data
+            db.listDocuments('dash1', 'ordersDetail', [
+                Query.equal('id_', [data.$id])
+            ]).then((data) => {
+                const rzlt = data.documents
+                rzlt.forEach(element => {
+                    const id = element.$id
+                    db.deleteDocument('dash1', 'ordersDetail', id)
+                });
+                this.editedIndex = this.orders.indexOf(data)
+                this.editedItem = Object.assign({}, data)
+                this.dialogDelete = true
+                db.deleteDocument('dash1', 'orders', idd.$id)
             })
-            const data = this.allData
-            const Itemtitle = title
-            const rzlt = data.documents.map(item => ({ Title: item.Title, Colours: item.Colours })).filter(item => (item.Title == Itemtitle))
-            console.log(rzlt)
-            rzlt.forEach(item => {
-                this.detailsColour.push(item.Colours)
+            console.log(data.$id)
+
+        },
+        initialize() {
+            db.listDocuments('dash1', 'orders').then((data) => {
+                //  console.log(data)
+                const rzlt = data.documents
+                // rzlt.forEach(orders => {});
+                this.orders = rzlt
+                //    console.log(this.orders)
+            }),
+                db.listDocuments('dash1', 'ProductsName').then((data) => {
+                    const prdcts = data.documents
+                    prdcts.forEach(data => {
+                        const items = data
+                        this.itemDetails.push(items)
+
+
+                    })
+                    console.log(this.itemDetails)
+                })
+        },
+
+        editItem(item) {
+            this.editedIndex = this.orders.indexOf(item)
+            this.ordersDetail = Object.assign({}, item)
+            db.listDocuments('dash1', 'OrdersDetail', [
+                Query.equal('id_', [item.$id])
+            ]).then((data) => {
+                const rzlt = data.documents
+                console.log(rzlt)
+                rzlt.forEach(data => {
+                    const items = data
+                    this.ordersDetail.push(items)
+                })
+            })
+            this.dialogEdit = true
+        },
+        deleteItem(item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.dialogDelete = true
+        },
+        deleteItemConfirm() {
+            this.orders.splice(this.editedIndex, 1)
+            this.closeDelete()
+        },
+
+        close() {
+            this.dialog = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
             })
         },
-        async getDetailsSize(Colour) {
-            await db.listDocuments('dash1', 'products').then((data) => {
-                this.allData = data;
-            })
-            const data = this.allData
 
-            const Clr = Colour
-            this.detailsSize = []
-            const rzlt = data.documents.map(item => ({ Colours: item.Colours, Size: item.Size })).filter(item => (item.Colours == Clr))
-            rzlt.forEach(item => {
-
-                this.detailsSize.push(item.Size)
+        closeDelete() {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
             })
         },
-        /* async getDetailsStock(Size) {
-             await db.listDocuments('dash1', 'products').then((data) => {
-                 this.allData = data;
-             })
-             const data = this.allData
-             const Itemtitle = title
-             const rzlt = data.documents.map(item => ({Stock: item.Ref })).filter(item => (item.Size == Size))
-             rzlt.forEach(item => {
-                 this.detailsStock.push(item.Stock)
-             })
-         }*/
 
+        save() {
+            if (this.editedIndex > -1) {
+                Object.assign(this.desserts[this.editedIndex], this.editedItem)
+            } else {
+                this.desserts.push(this.editedItem)
+            }
+            this.close()
+        },
     },
     beforeMount() {
-        // function to get Documents of Products from the database
-        // still need some work 
+        // function to get Documents of orders
 
+    },
+    computed: {
+        formTitle() {
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+    },
 
-        db.listDocuments('dash1', 'products').then((data) => {
+    watch: {
+        dialog(val) {
+            val || this.close()
+        },
+        dialogDelete(val) {
+            val || this.closeDelete()
+        },
+    },
 
-            const prdcts = data.documents
-
-            prdcts.forEach(item => {
-                var product = item.Title
-                //  this.Products.push(product)
-                this.ProductTitles.push(product)
-                this.Products.push(
-                    {
-                        title: item.Title,
-                        colours: item.Colours,
-                        size: item.Size,
-                        price: item.Price,
-                    }
-
-                )
-
-            })
-            console.log(...this.Products)
-            /*   for (let i = 0; i < prdcts.length; i++) {
-                   this.Item.push( prdcts[i].Title)
-                   this.size.push( prdcts[i].Size)
-                   this.colour.push( prdcts[i].Colours)
-                   this.Price.push( prdcts[i].Price)
-                   console.log(prdcts);
-               }*/
-
-
-        })
-
-    }
-
+    created() {
+        this.initialize()
+    },
 }
 </script>
