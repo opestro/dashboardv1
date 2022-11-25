@@ -105,62 +105,55 @@
                         </v-card>
                     </v-dialog>
 
-                    <!--==ddddddddddddddddddddd==-->
+                    <!--==View order content==-->
                     <v-dialog v-model="dialogEdit" max-width="500px">
                         <v-card>
                             <v-card-title>
-                                <span class="text-h5">Edit order</span>
+                                <span class="text-h5">View Order</span>
                             </v-card-title>
 
                             <v-card-text>
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.Fullname" label="Full Name"></v-text-field>
+                                            <v-text-field v-model="ordersDetail.FullName" label="Full Name"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.Address" label="Address"></v-text-field>
+                                            <v-text-field v-model="ordersDetail.Address" label="Address"></v-text-field>
                                         </v-col>
 
                                     </v-row>
                                     <v-row>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.Wilaya" label="Wilaya"></v-text-field>
+                                            <v-text-field v-model="ordersDetail.Wilaya" label="Wilaya"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.PhoneNumber" label="Phone Number">
+                                            <v-text-field v-model="ordersDetail.PhoneNumber" label="Phone Number">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <div v-for="(DataDetail, index) in ordersDetail" :key="(index)">
+                                          <div v-for="DataDetail in ordersDetail.Details" :key="DataDetail">
                                             <v-card outlined class="pa-2 my-2">
                                                 <v-row>
                                                     <v-col>
-                                                        <v-select v-model="DataDetail.Name" :items="ordersDetail"
-                                                            item-text="Colour" item-value="Colour" label="Select Items">
-                                                        </v-select>
+                                                        <v-text-field v-model="DataDetail.Item" >
+                                                        </v-text-field>
                                                     </v-col>
                                                     <v-col>
-                                                        <v-select v-model="DataDetail.Colour" :items="ordersDetail"
-                                                            item-text="Colour" item-value="Colour" label="Select Colour"
-                                                            @change="getDetails(DataDetail.Colour, detail = 'Size', index)">
-                                                        </v-select>
+                                                        <v-text-field v-model="DataDetail.Colour" >
+                                                        </v-text-field>
                                                     </v-col>
                                                     <v-col>
-                                                        <v-select v-model="DataDetail.Size" :items="SizeDetail[index]"
-                                                            item-text="Size" item-value="Size" label="Select Size"
-                                                            @change="getDetails(DataDetail.Size, '', index)">
-                                                        </v-select>
+                                                        <v-text-field v-model="DataDetail.Size" >
+                                                        </v-text-field>
                                                     </v-col>
                                                 </v-row>
 
                                                 <div class="d-flex">
                                                     <v-card-text>Quantity :
                                                     </v-card-text>
-                                                    <v-card-subtitle v-model="DataDetail.Quantity"
-                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
-                                                    </v-card-subtitle>
+                                                    <v-text-field v-model="DataDetail.Quantity"></v-text-field>
 
                                                     <v-card-subtitle>
                                                         <v-chip class="" color="red" outlined @click="remove(index)"
@@ -170,13 +163,13 @@
                                                     </v-card-subtitle>
                                                 </div>
                                             </v-card>
-                                        </div>
+                                        </div> 
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.Shipping" label="Shiping">
+                                            <v-text-field v-model="ordersDetail.Shiping" label="Shiping">
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="orders.Total" label="Total">
+                                            <v-text-field v-model="ordersDetail.Total" label="Total">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
@@ -288,7 +281,9 @@ export default {
             SizeDetail: [],
             Quantity: [{ 0: { Quantity: 0 } }],
             changedData: '',
-            ordersDetail: [],
+            ordersDetail: [{
+                Details: []
+            }],
         }
     },
     methods: {
@@ -430,18 +425,30 @@ export default {
         },
 
         editItem(item) {
+
+        //    this.ordersDetail.push({ ...item })
+        //    console.log(this.ordersDetail)
             this.editedIndex = this.orders.indexOf(item)
             this.ordersDetail = Object.assign({}, item)
-            db.listDocuments('dash1', 'OrdersDetail', [
-                Query.equal('id_', [item.$id])
-            ]).then((data) => {
-                const rzlt = data.documents
-                console.log(rzlt)
-                rzlt.forEach(data => {
-                    const items = data
-                    this.ordersDetail.push(items)
-                })
-            })
+            console.log(this.ordersDetail)
+             const id = this.ordersDetail.$id
+             console.log(id)
+             db.listDocuments('dash1', 'OrdersDetail', [
+                 Query.equal('id_', [id])
+             ]).then((data) => {
+                 const rzlt = data.documents
+                 const detail = []
+                 rzlt.forEach(data => {
+                     const items = data
+                     
+                     //const details =  this.ordersDetail.Details
+                     detail.push(items)
+                     
+                 })
+                 console.log(detail)
+                 this.ordersDetail.Dtails = detail
+             })
+             console.log(this.ordersDetail) 
             this.dialogEdit = true
         },
         deleteItem(item) {
