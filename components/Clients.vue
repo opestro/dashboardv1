@@ -70,7 +70,7 @@
                                                     </v-card-subtitle>
 
                                                     <v-card-subtitle>
-                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                        <v-chip class="" color="red" outlined @click="remove(index, DataDetail, variant = 'old')"
                                                             v-show="index != 0"> Delete
                                                             X
                                                         </v-chip>
@@ -234,19 +234,20 @@ export default {
     data() {
         return {
             dialogEdit: false,
-            addfield: [{
-                Item: '',
-                Size: '',
-                Colour: '',
-                Quantity: '',
+            addfield: {
                 id: '',
                 Name: '',
                 Wilaya: '',
                 PhoneNumber: 0,
                 Total: 0,
                 Shipping: '',
-                Status: 0
-            }],
+                Status: 0,
+                Item: '',
+                Size: '',
+                Colour: '',
+                Quantity: '',
+               
+            },
             newOrder: [],
             dialog: false,
             dialogDelete: false,
@@ -345,6 +346,7 @@ export default {
         remove(index) {
             this.Orders.splice(index, 1);
         },
+
         getDetails(data, detail, index) {
 
             if (detail == 'Colour') {

@@ -29,8 +29,12 @@
 
                                     </v-row>
                                     <v-row>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="addfield.Wilaya" label="Wilaya"></v-text-field>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field type="number" v-model="addfield.Wilaya" label="Wilaya">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field v-model="addfield.Commune" label="Commune"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
                                             <v-text-field v-model="addfield.PhoneNumber" label="Phone Number">
@@ -70,7 +74,8 @@
                                                     </v-card-subtitle>
 
                                                     <v-card-subtitle>
-                                                        <v-chip class="" color="red" outlined @click="remove(index)"
+                                                        <v-chip class="" color="red" outlined
+                                                            @click="remove(index, DataDetail, 'old')"
                                                             v-show="index != 0"> Delete
                                                             X
                                                         </v-chip>
@@ -78,14 +83,22 @@
                                                 </div>
                                             </v-card>
                                         </div>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="addfield.Shipping" label="Shiping">
+                                        <v-col cols="12">
+                                            <v-text-field v-model="addfield.Remarque" label="Remarque">
                                             </v-text-field>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-select v-model="addfield.Delivery" :items="deliveryType" item-text="type"
+                                                item-value="value" label="Delivery Type">
+
+                                            </v-select>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
                                             <v-text-field v-model="addfield.Total" label="Total">
                                             </v-text-field>
                                         </v-col>
+
                                     </v-row>
                                 </v-container>
                             </v-card-text>
@@ -170,15 +183,15 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="blue darken-1" text @click="addMore()">
-                                    Add Variation
+                                <v-btn color="blue darken-1" text @click="confirmed(ordersDetail)">
+                                    Confirmed
                                 </v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn color="blue darken-1" text @click="AddNewClient()">
-                                    Add Order
+                                <v-btn color="blue darken-1" text @click="updateClient()">
+                                    Update
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
@@ -251,6 +264,8 @@ export default {
 
                 { text: 'Actions', value: 'actions', sortable: false },
             ],
+            deliveryType: [{ type: 'Home delivery', value: '0' },
+            { type: 'Stop Desk', value: '1' }],
             orders: [],
             editedIndex: -1,
             editedItem: {
@@ -280,6 +295,34 @@ export default {
         }
     },
     methods: {
+        confirmed(items) {
+            console.log(items)
+            const details = []
+            items.Details.forEach(element => {
+                details.push(element.Colour)
+            });
+            console.log(details)
+            this.$axios.post('https://app.noest-dz.com/api/public/create/order', {
+                api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
+                user_guid: 'TALH5G3I',
+                reference: items.$id,
+                client: items.FullName,
+                phone: items.PhoneNumber,
+                phone_2: '',
+                adresse: items.Address,
+                wilaya_id: items.Wilaya,
+                commune: items.Commune,
+                montant: items.Total,
+                remarque: items.Remarque,
+                produit: items.Data,
+                type_id: '',
+                poids: '',
+                stop_desk: '',
+                stock: items
+            }).then((data) => {
+                console.log(data)
+            }).catch((err) => { console.log(err) })
+        },
         // function to Create a new Order
         AddNewClient() {
             console.log(this.addfield)
@@ -291,7 +334,8 @@ export default {
                     "PhoneNumber": this.addfield.PhoneNumber,
                     "Shiping": this.addfield.Shipping,
                     "Total": this.addfield.Total,
-                    "Status": "Processing"
+                    "Status": "Processing",
+                    "Commune": this.addfield.Commune
                 }).then((id) => {
                     console.log(id)
                     const id_ = id.$id
@@ -310,10 +354,13 @@ export default {
                                         "Colour": colour,
                                         "Size": size,
                                         "Item": detail,
+                                    }).then(() => {
+
                                     })
 
                             })
                     })
+                    this.orders.push(id)
                 }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
@@ -330,9 +377,7 @@ export default {
         },
 
         // function to remove variations 
-        remove(index) {
-            this.Orders.splice(index, 1);
-        },
+
         getDetails(data, detail, index) {
 
             if (detail == 'Colour') {
@@ -442,6 +487,9 @@ export default {
                 console.log(this.ordersDetail)
                 this.dialogEdit = true
             })
+        },
+        remove(index) {
+            this.addfield.splice(index, 1)
         },
         deleteItem(item) {
             this.editedIndex = this.desserts.indexOf(item)
