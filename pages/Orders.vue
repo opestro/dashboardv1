@@ -47,7 +47,7 @@
                                                 <v-row>
                                                     <v-col>
                                                         <v-select v-model="DataDetail.Name" :items="itemDetails"
-                                                            item-text="Name" item-value="$id" label="Select Items"
+                                                            item-text="Name" item-value="Name" label="Select Items"
                                                             @change="getDetails(DataDetail.Name, 'Colour', index)">
                                                         </v-select>
                                                     </v-col>
@@ -66,12 +66,26 @@
                                                     </v-col>
                                                 </v-row>
 
-                                                <div class="d-flex">
-                                                    <v-card-text>Quantity :
-                                                    </v-card-text>
-                                                    <v-card-subtitle v-model="addfield.Quantity"
-                                                        v-for="qntt in Quantity[index]" :key="qntt">{{ qntt.Quantity }}
-                                                    </v-card-subtitle>
+                                                <div>
+                                                    <v-row>
+                                                        <v-col class="d-flex align-center ">
+                                                            <v-text-field v-model="DataDetail.Quantity"
+                                                                label="Quantity">
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="d-flex align-center ">
+                                                            <v-card-text>Stock :
+                                                            </v-card-text>
+                                                            <v-card-subtitle v-model="addfield.Stock"
+                                                                v-for="qntt in Quantity[index]" :key="qntt">{{
+                                                                        qntt.Quantity
+                                                                }}
+                                                            </v-card-subtitle>
+                                                        </v-col>
+
+                                                    </v-row>
+
+
 
                                                     <v-card-subtitle>
                                                         <v-chip class="" color="red" outlined
@@ -129,53 +143,42 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.FullName" label="Full Name">
+                                            <v-text-field v-model="ordersDetail.FullName" disabled label="Full Name">
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.Address" label="Address"></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.Wilaya" label="Wilaya"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.PhoneNumber" label="Phone Number">
+                                            <v-text-field v-model="ordersDetail.Address" disabled label="Address">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <div v-for="DataDetail in ordersDetail.Details" :key="DataDetail">
-                                            <v-card outlined class="pa-2 my-2">
-                                                <v-row>
-                                                    <v-col>
-                                                        <v-text-field v-model="DataDetail.Item" disabled>
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col>
-                                                        <v-text-field v-model="DataDetail.Colour" disabled>
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col>
-                                                        <v-text-field v-model="DataDetail.Size" disabled>
-                                                        </v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                                        <v-col cols="12" sm="4" md="4">
+                                            <v-text-field v-model="ordersDetail.Wilaya" disabled label="Wilaya">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="4" md="4">
+                                            <v-text-field v-model="ordersDetail.Commune" disabled label="Baladiya">
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="4" md="4">
+                                            <v-text-field v-model="ordersDetail.PhoneNumber" disabled
+                                                label="Phone Number">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
 
-                                                <div class="d-flex">
-                                                    <v-card-text>Quantity :
-                                                    </v-card-text>
-                                                    <v-text-field v-model="DataDetail.Quantity" disabled></v-text-field>
-                                                </div>
-                                            </v-card>
-                                        </div>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.Shiping" label="Shiping">
+                                        <v-col cols="12">
+                                            <v-text-field v-model="ordersDetail.produit" disabled>
                                             </v-text-field>
                                         </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="ordersDetail.Total" label="Total">
+
+                                        <!--  <v-col cols="12" sm="6" md="6">
+                                           <v-text-field v-model="ordersDetail.Shiping" label="Shiping">
+                                            </v-text-field> 
+                                        </v-col> -->
+                                        <v-col cols="12">
+                                            <v-text-field v-model="ordersDetail.Total" disabled label="Total">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
@@ -183,16 +186,23 @@
                             </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="blue darken-1" text @click="confirmed(ordersDetail)">
-                                    Confirmed
+                                <v-btn v-if="editButtons.delete" color="blue darken-1" text
+                                    @click="deleteClient(ordersDetail)">
+                                    Delete
+                                </v-btn>
+                                <v-btn v-if="editButtons.reject" color="blue darken-1" text @click="updateClient()">
+                                    Reject
                                 </v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn color="blue darken-1" text @click="updateClient()">
-                                    Update
+
+                                <v-btn v-if="editButtons.confirm" color="blue darken-1" text
+                                    @click="confirmed(ordersDetail)">
+                                    Confirm
                                 </v-btn>
+
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -233,6 +243,11 @@ export default {
     data() {
         return {
             dialogEdit: false,
+            editButtons: {
+                reject: true,
+                delete: false,
+                confirm: true,
+            },
             addfield: [{
                 Item: '',
                 Size: '',
@@ -290,78 +305,108 @@ export default {
             Quantity: [{ 0: { Quantity: 0 } }],
             changedData: '',
             ordersDetail: {
-                Details: {}
+                Details: {},
+                Activity: {},
+                Data: {},
+                produit: {}
             },
         }
     },
     methods: {
         confirmed(items) {
+            /*   let details = ''
+               items.Details.forEach(element => {
+                   details = details + element.Item + ' - ' + element.Colour + ' - ' + element.Size + ' x ' + element.Quantity + ','
+   
+               }); */
+            // console.log(details)
             console.log(items)
-            const details = []
-            items.Details.forEach(element => {
-                details.push(element.Colour)
+
+            this.$axios.post('https://app.noest-dz.com/api/public/valid/order', {
+                api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
+                user_guid: 'TALH5G3I',
+                tracking: items.Tracking
+            }).then(() => {
+                console.log(items)
+                db.updateDocument('dash1', 'Orders', items.$id,
+                    { Status: "confirmed" }).then(() => {
+                        this.editButtons.delete = true
+                        this.editButtons.confirm = false
+                        this.editButtons.reject = false
+                    })
+            })
+        },
+        // function to Create a new Order
+        async AddNewClient() {
+            let details = ''
+            const orderDetails = this.addfield
+            console.log(orderDetails)
+            await orderDetails.forEach(element => {
+                details = details + element.Name + ' - ' + element.Colour + ' - ' + element.Size + ' x ' + element.Quantity.toString() + ' | '
+
             });
-            console.log(details)
+
             this.$axios.post('https://app.noest-dz.com/api/public/create/order', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',
-                reference: items.$id,
-                client: items.FullName,
-                phone: items.PhoneNumber,
+                reference: '',
+                client: this.addfield.Fullname,
+                phone: this.addfield.PhoneNumber,
                 phone_2: '',
-                adresse: items.Address,
-                wilaya_id: items.Wilaya,
-                commune: items.Commune,
-                montant: items.Total,
-                remarque: items.Remarque,
-                produit: items.Data,
-                type_id: '',
-                poids: '',
-                stop_desk: '',
-                stock: items
-            }).then((data) => {
-                console.log(data)
+                adresse: this.addfield.Address,
+                wilaya_id: this.addfield.Wilaya,
+                montant: this.addfield.Total,
+                commune: this.addfield.Commune,
+                remarque: this.addfield.Remarque,
+                produit: details,
+                type_id: 1,
+                poids: 1,
+                stop_desk: 1,
+                stock: 0
+            }).then((success) => {
+                console.log(success.data.tracking)
+                db.createDocument('dash1', 'orders', "unique()",
+                    {
+                        "FullName": this.addfield.Fullname,
+                        "Address": this.addfield.Address,
+                        "Wilaya": this.addfield.Wilaya,
+                        "PhoneNumber": this.addfield.PhoneNumber,
+                        "Shiping": this.addfield.Shipping,
+                        "Total": this.addfield.Total,
+                        "Status": "Processing",
+                        "Remarque": this.addfield.Remarque,
+                        "Commune": this.addfield.Commune,
+                        "Tracking": success.data.tracking
+                    }).then((id) => {
+                        console.log(id)
+                        const id_ = id.$id
+                        this.addfield.forEach(element => {
+                            const name = element.Name
+                            const colour = element.Colour
+                            const size = element.Size
+
+                            console.log(name)
+                            db.listDocuments('dash1', 'ProductsName', [Query.equal('Name', [name])])
+                                .then((data) => {
+                                    const detail = data.documents[0].Name
+                                    //  console.log(detail)
+                                    db.createDocument('dash1', 'ordersDetail', "unique()",
+                                        {
+                                            "id_": id_,
+                                            "Colour": colour,
+                                            "Size": size,
+                                            "Item": detail,
+                                        }).then(() => {
+
+                                        })
+
+                                })
+                        })
+                        this.orders.push(id)
+                    }).catch((err) => { alert(err) })
             }).catch((err) => { console.log(err) })
-        },
-        // function to Create a new Order
-        AddNewClient() {
             console.log(this.addfield)
-            db.createDocument('dash1', 'orders', "unique()",
-                {
-                    "FullName": this.addfield.Fullname,
-                    "Address": this.addfield.Address,
-                    "Wilaya": this.addfield.Wilaya,
-                    "PhoneNumber": this.addfield.PhoneNumber,
-                    "Shiping": this.addfield.Shipping,
-                    "Total": this.addfield.Total,
-                    "Status": "Processing",
-                    "Commune": this.addfield.Commune
-                }).then((id) => {
-                    console.log(id)
-                    const id_ = id.$id
-                    this.addfield.forEach(element => {
-                        const name = element.Name
-                        const colour = element.Colour
-                        const size = element.Size
-                        console.log(name)
-                        db.listDocuments('dash1', 'ProductsName', [Query.equal('$id', [name])])
-                            .then((data) => {
-                                const detail = data.documents[0].Name
-                                //  console.log(detail)
-                                db.createDocument('dash1', 'ordersDetail', "unique()",
-                                    {
-                                        "id_": id_,
-                                        "Colour": colour,
-                                        "Size": size,
-                                        "Item": detail,
-                                    }).then(() => {
 
-                                    })
-
-                            })
-                    })
-                    this.orders.push(id)
-                }).catch((err) => { alert(err) })
             this.AddNew = false
             this.Done = true
             this.ShowClient = false
@@ -383,15 +428,20 @@ export default {
             if (detail == 'Colour') {
                 this.ColourDetail[index] = []
                 //     this.ColourDetail = []
-                const id = data
+                const Name = data
                 const i = index
                 //   this.ColourDetail[index] = this.ColourDetail[index] || [];
                 //    var ColourDetail = this.ColourDetail[index];
                 //   console.log(this.ColourDetail)
-                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
-                    const rzlt = data.documents
-                    this.ColourDetail[index] = [...rzlt];
-                    this.ColourDetail = [...this.ColourDetail];
+                db.listDocuments('dash1', 'ProductsName', [Query.equal('Name', [Name])]).then((data) => {
+                    const id_ = data.documents[0].$id
+                    console.log(id_)
+                    db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id_])]).then((dataDer) => {
+                        const dataorder = dataDer.documents
+                        this.ColourDetail[index] = [...dataorder]
+                        this.ColourDetail = [...this.ColourDetail]
+                    })
+
                 })
             } else if (detail == 'Size') {
                 this.SizeDetail[index] = []
@@ -425,29 +475,21 @@ export default {
         },
         // function to delete order
         deleteClient(data) {
-            const idd = data
-            db.listDocuments('dash1', 'ordersDetail', [
-                Query.equal('id_', [data.$id])
-            ]).then((data) => {
-                const rzlt = data.documents
-                rzlt.forEach(element => {
-                    const id = element.$id
-                    db.deleteDocument('dash1', 'ordersDetail', id)
-                });
-                this.editedIndex = this.orders.indexOf(data)
-                this.editedItem = Object.assign({}, data)
-                this.dialogDelete = true
-                db.deleteDocument('dash1', 'orders', idd.$id)
-            })
-            console.log(data.$id)
-
+            this.itemDetails = data
+            console.log(data)
+            this.editedIndex = this.orders.indexOf(data)
+            this.editedItem = Object.assign({}, data)
+            this.dialogDelete = true
         },
         initialize() {
+
             db.listDocuments('dash1', 'orders').then((data) => {
                 //  console.log(data)
                 const rzlt = data.documents
                 // rzlt.forEach(orders => {});
-                this.orders = rzlt
+                const datax = data.documents.filter(data => (data.deletedAt == "null"))
+                console.log(datax)
+                this.orders = datax
                 //    console.log(this.orders)
             }),
                 db.listDocuments('dash1', 'ProductsName').then((data) => {
@@ -463,30 +505,61 @@ export default {
         },
 
         editItem(item) {
-
-            //    this.ordersDetail.push({ ...item })
-            //    console.log(this.ordersDetail)
             this.editedIndex = this.orders.indexOf(item)
             this.ordersDetail = Object.assign({}, item)
-            console.log(this.ordersDetail)
-            const id = this.ordersDetail.$id
-            console.log(id)
-            db.listDocuments('dash1', 'OrdersDetail', [
-                Query.equal('id_', [id])
-            ]).then((data) => {
-                const rzlt = data.documents
-                const detail = []
-                rzlt.forEach(data => {
-                    const items = data
-                    //const details =  this.ordersDetail.Details
-                    detail.push(items)
-                })
-                // console.log(detail)
-                this.ordersDetail.Details = detail
-
+            this.$axios.post('https://app.noest-dz.com/api/public/get/tracking/info', {
+                api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
+                user_guid: 'TALH5G3I',
+                tracking: item.Tracking
+            }).then((success) => {
+                const ordersData = success.data.OrderInfo
+                this.ordersDetail.produit = ordersData.produit
                 console.log(this.ordersDetail)
-                this.dialogEdit = true
+                const id = this.ordersDetail.$id
+                console.log(success)
+                db.listDocuments('dash1', 'OrdersDetail', [
+                    Query.equal('id_', [id])
+                ]).then((data) => {
+                    //################################
+                    // Const for data of the order
+                    const rzlt = data.documents
+                    const shippingInfo = success.data.activity
+                    //################################
+                    // Arrays to using theme later
+                    const detail = []
+                    const Activity = []
+                    //################################
+                    rzlt.forEach(data => {
+                        const items = data
+                        detail.push(items)
+                    })
+                    shippingInfo.forEach(data => {
+                        const items = data
+                        Activity.push(items)
+                    })
+                    this.ordersDetail.Details = detail
+                    this.ordersDetail.Activity = Activity
+                    console.log(this.ordersDetail)
+                    const status = item.Status
+                    if (status === "Processing") {
+                        this.editButtons.confirm = true
+                        this.editButtons.reject = true
+                        this.editButtons.delete = false
+                    } else if (status === "confirmed") {
+                        this.editButtons.delete = true
+                        this.editButtons.confirm = false
+                        this.editButtons.reject = false
+                    } else {
+                        this.editButtons.confirm = false
+                        this.editButtons.reject = false
+                        this.editButtons.delete = false
+                    }
+                    this.dialogEdit = true
+
+                })
             })
+
+
         },
         remove(index) {
             this.addfield.splice(index, 1)
@@ -495,10 +568,37 @@ export default {
             this.editedIndex = this.desserts.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialogDelete = true
+            const data = this.ordersDetail
+
+
+            console.log(data)
         },
         deleteItemConfirm() {
-            this.orders.splice(this.editedIndex, 1)
-            this.closeDelete()
+            const data = this.ordersDetail
+            const tracking = this.ordersDetail.Tracking
+            console.log(data.Tracking)
+            console.log(tracking)
+               this.$axios.post('https://app.noest-dz.com/api/public/delete/order', {
+                   api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
+                   user_guid: 'TALH5G3I',
+                   tracking: tracking
+               }).then((deletSatatus) => { 
+                   const success = deletSatatus.data.success
+                   if (success) { 
+            //  console.log(deletSatatus)
+            const idd = this.ordersDetail.$id
+            db.updateDocument('dash1', 'orders', idd, {Status : 'Deleted',  deletedAt: new Date() }).then(() => {
+                this.orders.splice(this.editedIndex, 1)
+                this.closeDelete()
+                console.log(idd)
+            })
+
+              } else {
+                  console.log('try again')
+              }
+
+          }).catch((err) => { console.log(err) }) 
+
         },
 
         close() {
