@@ -190,7 +190,8 @@
                                     @click="deleteClient(ordersDetail)">
                                     Delete
                                 </v-btn>
-                                <v-btn v-if="editButtons.reject" color="blue darken-1" text @click="updateClient()">
+                                <v-btn v-if="editButtons.reject" color="blue darken-1" text
+                                    @click="isRejected(ordersDetail)">
                                     Reject
                                 </v-btn>
                                 <v-spacer></v-spacer>
@@ -313,21 +314,23 @@ export default {
         }
     },
     methods: {
-        confirmed(items) {
-            /*   let details = ''
-               items.Details.forEach(element => {
-                   details = details + element.Item + ' - ' + element.Colour + ' - ' + element.Size + ' x ' + element.Quantity + ','
-   
-               }); */
-            // console.log(details)
-            console.log(items)
+        isRejected(items) {
 
+            console.log(index)
+            db.updateDocument('dash1', 'Orders', items.$id,
+                { Status: "Rejected" }).then(() => {
+
+                    this.editButtons.delete = true
+                    this.editButtons.confirm = true
+                    this.editButtons.reject = false
+                })
+        },
+        confirmed(items) {
             this.$axios.post('https://app.noest-dz.com/api/public/valid/order', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',
                 tracking: items.Tracking
             }).then(() => {
-                console.log(items)
                 db.updateDocument('dash1', 'Orders', items.$id,
                     { Status: "confirmed" }).then(() => {
                         this.editButtons.delete = true
@@ -549,6 +552,10 @@ export default {
                         this.editButtons.delete = true
                         this.editButtons.confirm = false
                         this.editButtons.reject = false
+                    } else if (status === "Rejected") {
+                        this.editButtons.confirm = true
+                        this.editButtons.reject = false
+                        this.editButtons.delete = true
                     } else {
                         this.editButtons.confirm = false
                         this.editButtons.reject = false
@@ -578,26 +585,26 @@ export default {
             const tracking = this.ordersDetail.Tracking
             console.log(data.Tracking)
             console.log(tracking)
-               this.$axios.post('https://app.noest-dz.com/api/public/delete/order', {
-                   api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
-                   user_guid: 'TALH5G3I',
-                   tracking: tracking
-               }).then((deletSatatus) => { 
-                   const success = deletSatatus.data.success
-                   if (success) { 
-            //  console.log(deletSatatus)
-            const idd = this.ordersDetail.$id
-            db.updateDocument('dash1', 'orders', idd, {Status : 'Deleted',  deletedAt: new Date() }).then(() => {
-                this.orders.splice(this.editedIndex, 1)
-                this.closeDelete()
-                console.log(idd)
-            })
+            this.$axios.post('https://app.noest-dz.com/api/public/delete/order', {
+                api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
+                user_guid: 'TALH5G3I',
+                tracking: tracking
+            }).then((deletSatatus) => {
+                const success = deletSatatus.data.success
+                if (success) {
+                    //  console.log(deletSatatus)
+                    const idd = this.ordersDetail.$id
+                    db.updateDocument('dash1', 'orders', idd, { Status: 'Deleted', deletedAt: new Date() }).then(() => {
+                        this.orders.splice(this.editedIndex, 1)
+                        this.closeDelete()
+                        console.log(idd)
+                    })
 
-              } else {
-                  console.log('try again')
-              }
+                } else {
+                    console.log('try again')
+                }
 
-          }).catch((err) => { console.log(err) }) 
+            }).catch((err) => { console.log(err) })
 
         },
 
