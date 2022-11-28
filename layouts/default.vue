@@ -1,5 +1,5 @@
 <template>
-  <v-app  >
+  <v-app>
     <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app
       class="rounded-br-xl ">
       <v-card class="ma-2 rounded-xl">
@@ -32,17 +32,17 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app class="rounded-br-xl  ">
-     
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-        <v-toolbar-title>{{ title }}</v-toolbar-title>
+
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
-     
-        <v-icon @click="darkMode">mdi-brightness-4 LOl</v-icon>
-      
+
+      <v-icon @click="darkMode">mdi-brightness-4 LOl</v-icon>
+
 
 
     </v-app-bar>
-    <v-main >
+    <v-main>
       <v-container>
         <Nuxt />
 
@@ -92,23 +92,24 @@ export default {
         }
       ],
       title: 'Dashboard heazlly',
-      
+
     }
   },
   methods: {
     darkMode() {
-   this.$vuetify.theme.dark=!this.$vuetify.theme.dark;
-   localStorage.setItem("useDarkTheme", this.$vuetify.theme.dark.toString())
-}
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      localStorage.setItem("useDarkTheme", this.$vuetify.theme.dark.toString())
+    }
   },
   mounted() {
-  const theme = localStorage.getItem("useDarkTheme");
-      if (theme) {
-        if (theme == "true") {
-          this.$vuetify.theme.dark = true;
-        } else this.$vuetify.theme.dark = false;
-      }
-}
-  
+    const theme = localStorage.getItem("useDarkTheme");
+    if (theme) {
+      if (theme == "true") {
+        this.$vuetify.theme.dark = true;
+      } else this.$vuetify.theme.dark = false;
+    }
+  }
+
+
 }
 </script>

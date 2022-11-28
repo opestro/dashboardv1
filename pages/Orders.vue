@@ -349,7 +349,7 @@ export default {
 
             });
             const userid = this.$store.state.auth.user.id
-            console.log(userID)
+         //   console.log(userID)
             this.$axios.post('https://app.noest-dz.com/api/public/create/order', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',

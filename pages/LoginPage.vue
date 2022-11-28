@@ -31,6 +31,7 @@ export default {
         Login() {
             account.createEmailSession(this.email, this.pass)
                 .then((session) => {
+                  //  console.log(session)
                     const id = session.userId
                     db.getDocument('dash1', 'user1', id)
                         .then((data) => {
