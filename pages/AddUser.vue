@@ -44,11 +44,11 @@ export default {
                         const userID = data.$id
                         // Checking the type of user
                         if (this.type == 'Validator') {
-                            db.createDocument('dash1', 'user1', "unique()", { 'UserType': 'Validator','Username': this.name , 'Email':this.email, 'id_' : userID });
+                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Validator','Username': this.name , 'Email':this.email });
                         } else if (this.type == 'Affiliate') {
-                            db.createDocument('dash1', 'user1', "unique()", { 'UserType': 'Affiliate','Username': this.name , 'Email':this.email, 'id_' : userID });
+                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Affiliate','Username': this.name , 'Email':this.email });
                         } else {
-                            db.createDocument('dash1', 'user1', "unique()", { 'UserType': 'Admin','Username': this.name , 'Email':this.email, 'id_' : userID });
+                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Admin','Username': this.name , 'Email':this.email });
                         }
                         //  const dbcUsers = db.createDocument('dash1', 'user1', '[DOCUMENT_ID]', {});
 

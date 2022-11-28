@@ -343,12 +343,13 @@ export default {
         async AddNewClient() {
             let details = ''
             const orderDetails = this.addfield
-            console.log(orderDetails)
+          
             await orderDetails.forEach(element => {
                 details = details + element.Name + ' - ' + element.Colour + ' - ' + element.Size + ' x ' + element.Quantity.toString() + ' | '
 
             });
-
+            const userid = this.$store.state.auth.user.id
+            console.log(userID)
             this.$axios.post('https://app.noest-dz.com/api/public/create/order', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',
@@ -377,6 +378,7 @@ export default {
                         "Shiping": this.addfield.Shipping,
                         "Total": this.addfield.Total,
                         "Status": "Processing",
+                        "userID": this.$store.state.auth.user.id,
                         "Remarque": this.addfield.Remarque,
                         "Commune": this.addfield.Commune,
                         "Tracking": success.data.tracking
@@ -508,12 +510,14 @@ export default {
         },
 
         editItem(item) {
+            console.log(item.Tracking)
+            const track = item.Tracking
             this.editedIndex = this.orders.indexOf(item)
             this.ordersDetail = Object.assign({}, item)
             this.$axios.post('https://app.noest-dz.com/api/public/get/tracking/info', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',
-                tracking: item.Tracking
+                tracking: track
             }).then((success) => {
                 const ordersData = success.data.OrderInfo
                 this.ordersDetail.produit = ordersData.produit

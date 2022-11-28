@@ -32,19 +32,18 @@ export default {
             account.createEmailSession(this.email, this.pass)
                 .then((session) => {
                     const id = session.userId
-                    db.listDocuments('dash1', 'user1', [Query.equal('id_', [id])])
+                    db.getDocument('dash1', 'user1', id)
                         .then((data) => {
-
-                            const userData = {
-                                id: data.documents[0].id_,
-                                email: data.documents[0].Email,
-                                fullname: data.documents[0].Username,
-                                type: data.documents[0].UserType,
+                           const userData = {
+                                id: data.$id,
+                                email: data.Email,
+                                fullname: data.Username,
+                                type: data.UserType,
                             }
                             // console.log(userInfo) 
                             this.$store.commit('auth/userInfo', userData)
                             const test = this.$store.state.auth.user
-                            console.log(test)
+                            console.log(test) 
 
                         })
                         .catch((err) => { alert(err) })
