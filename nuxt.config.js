@@ -21,8 +21,7 @@ export default {
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-  ],
+  plugins: ['./plugins/auth.js'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -79,7 +78,4 @@ export default {
   server: {
     host: '0.0.0.0' // default: localhost
   },
-  router: {
-    middleware: 'auth'
-  }
 }

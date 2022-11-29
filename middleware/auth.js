@@ -1,7 +1,8 @@
-export default function ({ store, redirect }) {
-    // If the user is not authenticated
-    console.log(store.state.auth.user)
+import { account, db, Query } from "../appwrite";
+export default async function ({ store, redirect }) {
+  // Authentication
     if (store.state.auth.user === 'null') {
-      return redirect('/LoginPage')
-    }
-  }
+        return redirect('/LoginPage')
+      }
+
+}

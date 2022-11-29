@@ -659,5 +659,6 @@ export default {
     created() {
         this.initialize()
     },
+    middleware: 'auth'
 }
 </script>
