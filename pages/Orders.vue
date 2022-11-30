@@ -316,7 +316,7 @@ export default {
     methods: {
         isRejected(items) {
 
-            console.log(index)
+            //  console.log(index)
             db.updateDocument('dash1', 'Orders', items.$id,
                 { Status: "Rejected" }).then(() => {
 
@@ -368,7 +368,7 @@ export default {
                 stop_desk: 1,
                 stock: 0
             }).then((success) => {
-                console.log(success.data.tracking)
+                //  console.log(success.data.tracking)
                 db.createDocument('dash1', 'orders', "unique()",
                     {
                         "FullName": this.addfield.Fullname,
@@ -383,14 +383,14 @@ export default {
                         "Commune": this.addfield.Commune,
                         "Tracking": success.data.tracking
                     }).then((id) => {
-                        console.log(id)
+                        //  console.log(id)
                         const id_ = id.$id
                         this.addfield.forEach(element => {
                             const name = element.Name
                             const colour = element.Colour
                             const size = element.Size
 
-                            console.log(name)
+                            //  console.log(name)
                             db.listDocuments('dash1', 'ProductsName', [Query.equal('Name', [name])])
                                 .then((data) => {
                                     const detail = data.documents[0].Name
@@ -409,8 +409,9 @@ export default {
                         })
                         this.orders.push(id)
                     }).catch((err) => { alert(err) })
-            }).catch((err) => { console.log(err) })
-            console.log(this.addfield)
+            }).catch((err) => { //  console.log(err) 
+            })
+            //  console.log(this.addfield)
 
             this.AddNew = false
             this.Done = true
@@ -440,7 +441,7 @@ export default {
                 //   console.log(this.ColourDetail)
                 db.listDocuments('dash1', 'ProductsName', [Query.equal('Name', [Name])]).then((data) => {
                     const id_ = data.documents[0].$id
-                    console.log(id_)
+                    //  console.log(id_)
                     db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id_])]).then((dataDer) => {
                         const dataorder = dataDer.documents
                         this.ColourDetail[index] = [...dataorder]
@@ -470,7 +471,7 @@ export default {
                     //this.Quantity = rzlt
                     this.Quantity[index] = [...rzlt];
                     this.Quantity = [...this.Quantity];
-                    console.log(this.Quantity)
+                    //  console.log(this.Quantity)
                     //8     console.log(this.Quantity)
 
 
@@ -481,7 +482,7 @@ export default {
         // function to delete order
         deleteClient(data) {
             this.itemDetails = data
-            console.log(data)
+            //  console.log(data)
             this.editedIndex = this.orders.indexOf(data)
             this.editedItem = Object.assign({}, data)
             this.dialogDelete = true
@@ -493,7 +494,7 @@ export default {
                 const rzlt = data.documents
                 // rzlt.forEach(orders => {});
                 const datax = data.documents.filter(data => (data.deletedAt == "null"))
-                console.log(datax)
+                //  console.log(datax)
                 this.orders = datax
                 //    console.log(this.orders)
             }),
@@ -505,12 +506,12 @@ export default {
 
 
                     })
-                    console.log(this.itemDetails)
+                    //  console.log(this.itemDetails)
                 })
         },
 
         editItem(item) {
-            console.log(item.Tracking)
+            //  console.log(item.Tracking)
             const track = item.Tracking
             this.editedIndex = this.orders.indexOf(item)
             this.ordersDetail = Object.assign({}, item)
@@ -521,9 +522,9 @@ export default {
             }).then((success) => {
                 const ordersData = success.data.OrderInfo
                 this.ordersDetail.produit = ordersData.produit
-                console.log(this.ordersDetail)
+              //  console.log(this.ordersDetail)
                 const id = this.ordersDetail.$id
-                console.log(success)
+             //   console.log(success)
                 db.listDocuments('dash1', 'OrdersDetail', [
                     Query.equal('id_', [id])
                 ]).then((data) => {
@@ -546,7 +547,7 @@ export default {
                     })
                     this.ordersDetail.Details = detail
                     this.ordersDetail.Activity = Activity
-                    console.log(this.ordersDetail)
+               //     console.log(this.ordersDetail)
                     const status = item.Status
                     if (status === "Processing") {
                         this.editButtons.confirm = true
@@ -582,13 +583,13 @@ export default {
             const data = this.ordersDetail
 
 
-            console.log(data)
+       //     console.log(data)
         },
         deleteItemConfirm() {
             const data = this.ordersDetail
             const tracking = this.ordersDetail.Tracking
-            console.log(data.Tracking)
-            console.log(tracking)
+         //   console.log(data.Tracking)
+         //   console.log(tracking)
             this.$axios.post('https://app.noest-dz.com/api/public/delete/order', {
                 api_token: 'OiHJO2UfRFlKRNWUJbg5L3hG0CEfQmnkDoW',
                 user_guid: 'TALH5G3I',
@@ -601,11 +602,11 @@ export default {
                     db.updateDocument('dash1', 'orders', idd, { Status: 'Deleted', deletedAt: new Date() }).then(() => {
                         this.orders.splice(this.editedIndex, 1)
                         this.closeDelete()
-                        console.log(idd)
+                        //  console.log(idd)
                     })
 
                 } else {
-                    console.log('try again')
+               //     console.log('try again')
                 }
 
             }).catch((err) => { console.log(err) })

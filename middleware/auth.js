@@ -1,8 +1,20 @@
+
 import { account, db, Query } from "../appwrite";
-export default async function ({ store, redirect }) {
+export default async function ({ store, redirect, }) {
   // Authentication
-    if (store.state.auth.user === 'null') {
-        return redirect('/LoginPage')
-      }
+ 
+    const isLogin = store.state.auth.user
+    console.log(isLogin)
+  
+
+    if (!isLogin) {
+      console.log('is not logged in')
+      return redirect('/LoginPage')
+    } else {
+      console.log('is logged in')
+    }
+    
+    
+    
 
 }
