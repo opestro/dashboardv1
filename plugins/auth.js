@@ -7,7 +7,7 @@ export default function ({ store, redirect }) {
   new Promise(async function (resolve, reject) {
 
     const userData = account.get()
-    store.dispatch('onAuthStateChangedAction', {...userData})
+    store.dispatch('auth/onAuthStateChangedAction', {...userData})
 
   })
 
