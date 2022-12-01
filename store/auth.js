@@ -16,7 +16,7 @@ export const getters = {
 export const actions = {
 
 
-    async onAuthStateChangedAction(state, { authUser }) {
+    async onAuthStateChangedAction(state, authUser) {
         
         if (!authUser || !authUser.$id) {
           state.commit('SET_UserInfo', null)
@@ -35,7 +35,7 @@ export const actions = {
             state.commit('SET_UserInfo', { ...authUser, ...dataDoc })
 
             this.$router.push({
-                path: '/dashboard',
+                path: '/Orders',
              })
           
         }

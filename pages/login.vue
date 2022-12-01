@@ -42,7 +42,7 @@ export default {
                                 type: data.UserType,
                             }
                             // console.log(userInfo) 
-                            this.$store.commit('auth/userInfo', userData)
+                            this.$store.commit('auth/SET_UserInfo', userData)
                             const test = this.$store.state.auth.user
                             console.log(test)
 
