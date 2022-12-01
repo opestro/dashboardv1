@@ -58,12 +58,12 @@
                                                 <v-col class="d-flex justify-end">
                                                     <div v-if="editedIndex != -1"> 
 
-                                                        <v-chip v-show="!(DataDetail.$id == -1)" class="align-center mr-2" color="blue" outlined>
+                                                        <v-chip v-if="DataDetail.$id != -1" class="align-center mr-2" color="blue" outlined>
                                                             <v-icon small class="" @click="editVariation(DataDetail)">
                                                                 mdi-pencil
                                                             </v-icon>
                                                         </v-chip>
-                                                        <v-chip v-show="DataDetail.$id == -1" class="align-center mr-2" color="green" outlined
+                                                        <v-chip v-else class="align-center mr-2" color="green" outlined
                                                             @click="saveVariation(index)">
                                                             <v-icon small class="mr-2">
                                                                 mdi-pencil
@@ -252,8 +252,7 @@ export default {
                 Price: element.Price,
                 id_: this.ProductDetail.$id
             }).then((data) => {
-                this.ProductVariation[index - 1].$id = data.$id
-                this.ProductVariation = [...this.ProductVariation]
+                this.ProductVariation[index].$id = data.$id
                 
             }).catch((err) => { alert(err) })
         },
