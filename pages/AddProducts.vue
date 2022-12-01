@@ -7,7 +7,7 @@
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" dark class="mb-2 rounded-xl" @click="newProduct()">
-                        New Product Name
+                        New Product
                     </v-btn>
                     <v-dialog v-model="dialog" max-width="500px" content-class=" rounded-xl">
                         <template v-slot:activator="{ on, attrs }">
@@ -52,17 +52,20 @@
                                             </v-row>
                                             <v-row class="align-center mb-3 ">
                                                 <v-col class="d-flex justify-end">
-                                                    <v-chip v-if="DataDetail.$id != -1 " class="align-center mr-2" color="blue" outlined>
-                                                        <v-icon small class="" @click="editVariation(item, DataDetail)">
-                                                            mdi-pencil
-                                                        </v-icon>
-                                                    </v-chip>
-                                                    <v-chip v-else class="align-center mr-2" color="green" outlined
-                                                        @click="saveVariation(index)">
-                                                        <v-icon small class="mr-2">
-                                                            mdi-pencil
-                                                        </v-icon> save
-                                                    </v-chip>
+                                                    <div v-if="editedIndex != -1"> 
+
+                                                        <v-chip v-if="DataDetail.$id != -1 " class="align-center mr-2" color="blue" outlined>
+                                                            <v-icon small class="" @click="editVariation(item, DataDetail)">
+                                                                mdi-pencil
+                                                            </v-icon>
+                                                        </v-chip>
+                                                        <v-chip v-else class="align-center mr-2" color="green" outlined
+                                                            @click="saveVariation(index)">
+                                                            <v-icon small class="mr-2">
+                                                                mdi-pencil
+                                                            </v-icon> save
+                                                        </v-chip>
+                                                    </div>
                                                     <v-chip class="align-center" color="red" outlined
                                                         @click="remove(index, DataDetail)">
                                                         X
@@ -84,75 +87,16 @@
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn color="blue darken-1" text @click="createProductsName(ProductDetail.Name)">
+                                <v-btn v-if="editedIndex != -1" color="blue darken-1" text @click="createProductsName(ProductDetail.Name)">
                                     Update
+                                </v-btn>
+                                <v-btn v-else color="blue darken-1" text @click="createProductsName()">
+                                        Add Order
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
-                    <v-dialog v-model="dialogAddNew" max-width="500px" content-class=" rounded-xl">
-                        <v-card class="pa-5 rounded-xl">
-                            <v-container>
-                                <div class="d-flex justify-space-between align-center">
-                                    <v-card-title>
-                                        <span class="text-h5">{{ formTitle }}</span>
-                                    </v-card-title>
-                                    <v-card-actions class="align-center">
-                                        <v-btn color="blue darken-1" text @click="addMore()">
-                                            Add Variation
-                                        </v-btn>
-                                    </v-card-actions>
-                                </div>
-                                <v-row>
-                                    <v-col cols="12">
-                                        <v-text-field v-model="ProductVariation.Name" label="Product name"></v-text-field>
-                                    </v-col>
-                                </v-row>
-                                <div v-for="(DataDetail, index) in ProductVariation" :key="(index)">
-                                    <v-card outlined class="pa-2 my-2 ">
-                                        <v-row class="align-center">
-                                            <v-col>
-                                                <v-text-field v-model="DataDetail.Colour" label="Colour">
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col>
-                                                <v-text-field v-model="DataDetail.Size" label="Size">
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col>
-                                                <v-text-field v-model="DataDetail.Quantity" label="Quantity">
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col>
-                                                <v-text-field v-model="DataDetail.Price" label="Price">
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col class="">
-                                                <v-chip class="" color="red" outlined @click="remove(index)"
-                                                    v-show="index != 0">
-                                                    X
-                                                </v-chip>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row class="align-center mb-3">
-                                        </v-row>
-                                        <v-row>
-                                        </v-row>
-                                    </v-card>
-                                </div>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">
-                                        Cancel
-                                    </v-btn>
-                                    <v-btn color="blue darken-1" text @click="createProductsName()">
-                                        Add Order
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-container>
-                        </v-card>
-
-                    </v-dialog>
+                   
                     <v-dialog v-model="dialogDelete" max-width="500px" content-class=" rounded-xl">
                         <v-card>
                             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -191,7 +135,6 @@ export default {
             ProductsName: [],
             ProductDetail: [],
             ProductVariation: [],
-            dialogAddNew: false,
             DataDetails: [{
                 Name: '',
                 Colour: '',
@@ -292,7 +235,9 @@ export default {
                 Price: '',
                 $id: -1
             });
-            this.dialogAddNew = !this.dialogAddNew
+
+            this.editedIndex = -1
+            this.dialog = true
         },
         saveVariation(index) {
             const element = this.ProductVariation.at(index)
@@ -376,7 +321,6 @@ export default {
         },
         close() {
             this.dialog = false,
-                this.dialogAddNew = false,
                 this.$nextTick(() => {
                     this.DataDetails = Object.assign({}, this.defaultItem)
                     this.editedIndex = -1
@@ -384,7 +328,6 @@ export default {
         },
         closeDelete() {
             this.dialogDelete = false,
-                this.dialogAddNew = false,
                 this.$nextTick(() => {
                     this.DataDetails = Object.assign({}, this.defaultItem)
                     this.editedIndex = -1
