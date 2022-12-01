@@ -58,12 +58,12 @@
                                                 <v-col class="d-flex justify-end">
                                                     <div v-if="editedIndex != -1"> 
 
-                                                        <v-chip v-if="DataDetail.$id != -1 " class="align-center mr-2" color="blue" outlined>
-                                                            <v-icon small class="" @click="editVariation(item, DataDetail)">
+                                                        <v-chip v-show="!(DataDetail.$id == -1)" class="align-center mr-2" color="blue" outlined>
+                                                            <v-icon small class="" @click="editVariation(DataDetail)">
                                                                 mdi-pencil
                                                             </v-icon>
                                                         </v-chip>
-                                                        <v-chip v-else class="align-center mr-2" color="green" outlined
+                                                        <v-chip v-show="DataDetail.$id == -1" class="align-center mr-2" color="green" outlined
                                                             @click="saveVariation(index)">
                                                             <v-icon small class="mr-2">
                                                                 mdi-pencil
@@ -91,7 +91,7 @@
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn v-if="editedIndex != -1" color="blue darken-1" text @click="createProductsName(ProductDetail.Name)">
+                                <v-btn v-if="editedIndex != -1" color="blue darken-1" text @click="createProductsName()">
                                     Update
                                 </v-btn>
                                 <v-btn v-else color="blue darken-1" text @click="createProductsName()">
@@ -253,17 +253,18 @@ export default {
                 id_: this.ProductDetail.$id
             }).then((data) => {
                 this.ProductVariation[index - 1].$id = data.$id
+                this.ProductVariation = [...this.ProductVariation]
                 
             }).catch((err) => { alert(err) })
         },
-        createProductsName(item) {
-            this.ProductDetail.Name = item
+        createProductsName() {
+
             if (this.editedIndex > -1) {
                 Object.assign(this.ProductsName[this.editedIndex], this.ProductDetail)
                 db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
                     { Name: this.ProductDetail.Name });
             } else {
-                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.ProductVariation.Name })
+                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.ProductDetail.Name })
                     .then((data) => {
                         const _id = data.$id
                         this.ProductVariation.forEach(element => {
@@ -313,7 +314,7 @@ export default {
         /*  addVariation(item) {
               this.dialogVariation = true
           }, */
-        editVariation(item, DataDetail) {
+        editVariation(DataDetail) {
             console.log(DataDetail)
             db.updateDocument('dash1', 'ProductsDetail', DataDetail.$id, {
                 Colour: DataDetail.Colour,
