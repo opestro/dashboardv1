@@ -1,9 +1,14 @@
 <template>
     <div class="">
-        <v-data-table :headers="headers" :items="orders" sort-by="calories" class="rounded-xl elevation-1">
+        <v-data-table :headers="headers" :items="orders" sort-by="calories" :search="search" class="rounded-xl elevation-1">
             <template v-slot:top>
                 <v-toolbar flat class="rounded-xl">
+                    
                     <v-toolbar-title>Orders</v-toolbar-title>
+                    <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
+                    </v-text-field>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="500px">
@@ -244,6 +249,7 @@ export default {
     data() {
         return {
             dialogEdit: false,
+            search: '',
             editButtons: {
                 reject: true,
                 delete: false,

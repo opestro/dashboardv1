@@ -1,9 +1,13 @@
 <template>
     <div>
-        <v-data-table :headers="headers" :items="ProductsName" class="elevation-1 rounded-xl">
+        <v-data-table :headers="headers" :items="ProductsName" :search="search" class="elevation-1 rounded-xl">
             <template v-slot:top>
                 <v-toolbar flat class="rounded-xl">
                     <v-toolbar-title>Products Name</v-toolbar-title>
+                    <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
+                    </v-text-field>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" dark class="mb-2 rounded-xl" @click="newProduct()">
@@ -131,7 +135,7 @@ import { db, Query, ID } from "../appwrite.js"
 export default {
     data() {
         return {
-            addfield: [],
+            search: '',
             ProductsName: [],
             ProductDetail: [],
             ProductVariation: [],
