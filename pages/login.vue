@@ -50,6 +50,7 @@ export default {
                         .catch((err) => { alert(err) })
                 })
         }
-    }
+    },
+    middleware: 'guest'
 }
 </script>
