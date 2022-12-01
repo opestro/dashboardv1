@@ -105,10 +105,10 @@
                                 </div>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field v-model="addfield.Name" label="Product name"></v-text-field>
+                                        <v-text-field v-model="ProductVariation.Name" label="Product name"></v-text-field>
                                     </v-col>
                                 </v-row>
-                                <div v-for="(DataDetail, index) in addfield" :key="(index)">
+                                <div v-for="(DataDetail, index) in ProductVariation" :key="(index)">
                                     <v-card outlined class="pa-2 my-2 ">
                                         <v-row class="align-center">
                                             <v-col>
@@ -284,7 +284,7 @@ export default {
             })
         },
         newProduct() {
-            this.addfield.push({
+            this.ProductVariation.push({
                 Name: '',
                 Size: '',
                 Colour: '',
@@ -314,10 +314,10 @@ export default {
                 db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
                     { Name: this.ProductDetail.Name });
             } else {
-                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.addfield.Name })
+                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.ProductVariation.Name })
                     .then((data) => {
                         const _id = data.$id
-                        this.addfield.forEach(element => {
+                        this.ProductVariation.forEach(element => {
                             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                                 Colour: element.Colour,
                                 Size: element.Size,
