@@ -52,13 +52,19 @@
                                             </v-row>
                                             <v-row class="align-center mb-3 ">
                                                 <v-col class="d-flex justify-end">
-                                                    <v-chip class="align-center mr-2" color="blue" outlined>
+                                                    <v-chip v-if="DataDetail.$id != -1 " class="align-center mr-2" color="blue" outlined>
                                                         <v-icon small class="" @click="editVariation(item, DataDetail)">
                                                             mdi-pencil
                                                         </v-icon>
                                                     </v-chip>
+                                                    <v-chip v-else class="align-center mr-2" color="green" outlined
+                                                        @click="saveVariation(index)">
+                                                        <v-icon small class="mr-2">
+                                                            mdi-pencil
+                                                        </v-icon> save
+                                                    </v-chip>
                                                     <v-chip class="align-center" color="red" outlined
-                                                        @click="remove(index, DataDetail, variant = 'old')">
+                                                        @click="remove(index, DataDetail)">
                                                         X
                                                     </v-chip>
                                                 </v-col>
@@ -69,42 +75,7 @@
                                     </div>
                                     <!--==== End of Edit Variation ====-->
                                     <!--==== Add Variation ====-->
-                                    <div v-for="(DataDetail, index) in addfield" :key="(index)">
-                                        <v-card outlined class="pa-2 my-2">
-                                            <v-row>
-                                                <v-col>
-                                                    <v-text-field v-model="DataDetail.Colour" label="Colour">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col>
-                                                    <v-text-field v-model="DataDetail.Size" label="Size">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col>
-                                                    <v-text-field v-model="DataDetail.Quantity" label="Quantity">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col>
-                                                    <v-text-field v-model="DataDetail.Price" label="Price">
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                            <v-row>
-                                                <v-col class="d-flex justify-end" cols="12">
-
-                                                    <v-chip class="align-center mr-2" color="green" outlined
-                                                        @click="saveVariation(index)">
-                                                        <v-icon small class="mr-2">
-                                                            mdi-pencil
-                                                        </v-icon> save
-                                                    </v-chip>
-                                                    <v-chip class="align-center" color="red" outlined @click="remove()">
-                                                        X
-                                                    </v-chip>
-                                                </v-col>
-                                            </v-row>
-                                        </v-card>
-                                    </div>
+                                    
                                     <!--==== End of Add Variation ====-->
                                 </v-container>
                             </v-card-text>
@@ -227,7 +198,7 @@ export default {
                 Size: '',
                 Quantity: '',
                 Price: '',
-                $id: ''
+                $id: -1
             }],
             dialog: false,
             dialogDelete: false,
@@ -277,24 +248,24 @@ export default {
     },
     methods: {
         addMore() {
-            this.addfield.push({
+            this.ProductVariation.push({
                 Name: '',
                 Size: '',
                 Colour: '',
                 Quantity: '',
                 Price: '',
-                $id: ''
+                $id: -1
             });
         },
         // function to remove variations 
-        remove(index, DataDetail, variant) {
-            if (variant == 'old') {
+        remove(index, DataDetail) {
+            if (DataDetail.$id != -1) {
                 const id = DataDetail.$id
                 db.deleteDocument('dash1', 'ProductsDetail', id).then(() => {
                     this.ProductVariation.splice(index, 1)
                 })
             } else {
-                this.addfield.splice(index, 1)
+                this.ProductVariation.splice(index, 1)
             }
         },
         deleteProductsName() {
@@ -319,12 +290,12 @@ export default {
                 Colour: '',
                 Quantity: '',
                 Price: '',
-                $id: ''
+                $id: -1
             });
             this.dialogAddNew = !this.dialogAddNew
         },
         saveVariation(index) {
-            const element = this.addfield.at(index)
+            const element = this.ProductVariation.at(index)
             db.createDocument('dash1', 'ProductsDetail', 'unique()', {
                 Colour: element.Colour,
                 Size: element.Size,
@@ -332,14 +303,8 @@ export default {
                 Price: element.Price,
                 id_: this.ProductDetail.$id
             }).then((data) => {
-                this.addfield.splice(index, 1)
-                this.ProductVariation.push({
-                    Size: element.Size,
-                    Colour: element.Colour,
-                    Quantity: element.Quantity,
-                    Price: element.Price,
-                    $id: element.$id
-                });
+                this.ProductVariation[index - 1].$id = data.$id
+                
             }).catch((err) => { alert(err) })
         },
         createProductsName(item) {
@@ -387,7 +352,6 @@ export default {
                     this.ProductVariation.push(items)
                 })
             })
-            this.addfield = []
             this.dialog = true
         },
 
@@ -433,6 +397,7 @@ export default {
                 this.editedIndex = -1
             })
         },
-    }
+    },
+    middleware: 'auth'
 }
 </script>
