@@ -25,7 +25,7 @@ export const actions = {
             path: '/login',
           })
         } else {
-            const data = await db.getDocument('dash1', 'user1', authUser.$id)
+            const data = await db.getDocument('delivered', 'users', authUser.$id)
             const dataDoc = {
               id: data.$id,
               email: data.Email,

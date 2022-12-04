@@ -296,7 +296,7 @@ export default {
         // function to Create a new Order
         AddNewClient() {
             console.log(this.addfield)
-            db.createDocument('dash1', 'orders', "unique()",
+            db.createDocument('delivered', 'orders', "unique()",
                 {
                     "FullName": this.addfield.Fullname,
                     "Address": this.addfield.Address,
@@ -313,11 +313,11 @@ export default {
                         const colour = element.Colour
                         const size = element.Size
                         console.log(name)
-                        db.listDocuments('dash1', 'ProductsName', [Query.equal('$id', [name])])
+                        db.listDocuments('delivered', 'products', [Query.equal('$id', [name])])
                             .then((data) => {
                                 const detail = data.documents[0].Name
                                 //  console.log(detail)
-                                db.createDocument('dash1', 'ordersDetail', "unique()",
+                                db.createDocument('delivered', 'ordersDetail', "unique()",
                                     {
                                         "id_": id_,
                                         "Colour": colour,
@@ -357,7 +357,7 @@ export default {
                 //   this.ColourDetail[index] = this.ColourDetail[index] || [];
                 //    var ColourDetail = this.ColourDetail[index];
                 //   console.log(this.ColourDetail)
-                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('id_', [id])]).then((data) => {
+                db.listDocuments('delivered', 'variations', [Query.equal('id_', [id])]).then((data) => {
                     const rzlt = data.documents
                     this.ColourDetail[index] = [...rzlt];
                     this.ColourDetail = [...this.ColourDetail];
@@ -367,7 +367,7 @@ export default {
                 const colour = data
                 const id = data
                 this.changedData = data
-                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [colour])]).then((data) => {
+                db.listDocuments('delivered', 'variations', [Query.equal('Colour', [colour])]).then((data) => {
                     const rzlt = data.documents
                     this.SizeDetail[index] = [...rzlt];
                     this.SizeDetail = [...this.SizeDetail];
@@ -379,7 +379,7 @@ export default {
                 // console.log(id)
 
                 this.Quantity[index] = []
-                db.listDocuments('dash1', 'ProductsDetail', [Query.equal('Colour', [this.changedData]), Query.equal('Size', [Size])]).then((data) => {
+                db.listDocuments('delivered', 'variations', [Query.equal('Colour', [this.changedData]), Query.equal('Size', [Size])]).then((data) => {
                     const rzlt = data.documents
                     //this.Quantity = rzlt
                     this.Quantity[index] = [...rzlt];
@@ -395,31 +395,31 @@ export default {
         // function to delete order
         deleteClient(data) {
             const idd = data
-            db.listDocuments('dash1', 'ordersDetail', [
+            db.listDocuments('delivered', 'ordersDetail', [
                 Query.equal('id_', [data.$id])
             ]).then((data) => {
                 const rzlt = data.documents
                 rzlt.forEach(element => {
                     const id = element.$id
-                    db.deleteDocument('dash1', 'ordersDetail', id)
+                    db.deleteDocument('delivered', 'ordersDetail', id)
                 });
                 this.editedIndex = this.orders.indexOf(data)
                 this.editedItem = Object.assign({}, data)
                 this.dialogDelete = true
-                db.deleteDocument('dash1', 'orders', idd.$id)
+                db.deleteDocument('delivered', 'orders', idd.$id)
             })
             console.log(data.$id)
 
         },
         initialize() {
-            db.listDocuments('dash1', 'orders').then((data) => {
+            db.listDocuments('delivered', 'orders').then((data) => {
                 //  console.log(data)
                 const rzlt = data.documents
                 // rzlt.forEach(orders => {});
                 this.orders = rzlt
                 //    console.log(this.orders)
             }),
-                db.listDocuments('dash1', 'ProductsName').then((data) => {
+                db.listDocuments('delivered', 'products').then((data) => {
                     const prdcts = data.documents
                     prdcts.forEach(data => {
                         const items = data
@@ -434,7 +434,7 @@ export default {
         editItem(item) {
             this.editedIndex = this.orders.indexOf(item)
             this.ordersDetail = Object.assign({}, item)
-            db.listDocuments('dash1', 'OrdersDetail', [
+            db.listDocuments('delivered', 'OrdersDetail', [
                 Query.equal('id_', [item.$id])
             ]).then((data) => {
                 const rzlt = data.documents

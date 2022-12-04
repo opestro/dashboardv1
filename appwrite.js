@@ -3,8 +3,8 @@ import { Client, Account, Databases, Storage, ID, Permission, Role , Query  } fr
 const client = new Client();
 
 client
-    .setEndpoint('http://192.168.1.3/v1') // Your API Endpoint
-    .setProject('dash1') // Your project ID
+    .setEndpoint('http://51.91.97.19:8082') // Your API Endpoint
+    .setProject('delivered') // Your project ID
 ;
 const account = new Account(client);
 const storage = new Storage(client);

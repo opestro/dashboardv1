@@ -33,7 +33,7 @@ export default {
                 .then((session) => {
                     //  console.log(session)
                     const id = session.userId
-                    db.getDocument('dash1', 'user1', id)
+                    db.getDocument('delivered', 'users', id)
                         .then((data) => {
                             const userData = {
                                 id: data.$id,

@@ -44,13 +44,13 @@ export default {
                         const userID = data.$id
                         // Checking the type of user
                         if (this.type == 'Validator') {
-                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Validator','Username': this.name , 'Email':this.email });
+                            db.createDocument('delivered', 'users', userID, { 'UserType': 'Validator','Username': this.name , 'Email':this.email });
                         } else if (this.type == 'Affiliate') {
-                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Affiliate','Username': this.name , 'Email':this.email });
+                            db.createDocument('delivered', 'users', userID, { 'UserType': 'Affiliate','Username': this.name , 'Email':this.email });
                         } else {
-                            db.createDocument('dash1', 'user1', userID, { 'UserType': 'Admin','Username': this.name , 'Email':this.email });
+                            db.createDocument('delivered', 'users', userID, { 'UserType': 'Admin','Username': this.name , 'Email':this.email });
                         }
-                        //  const dbcUsers = db.createDocument('dash1', 'user1', '[DOCUMENT_ID]', {});
+                        //  const dbcUsers = db.createDocument('delivered', 'users', '[DOCUMENT_ID]', {});
 
 
                     })
@@ -62,7 +62,7 @@ export default {
         },
         // function to get Documents of Users
         GetDoc() {
-            db.listDocuments('dash1', 'user1').then((data) => {
+            db.listDocuments('delivered', 'users').then((data) => {
                 console.log(data)
             });
         }

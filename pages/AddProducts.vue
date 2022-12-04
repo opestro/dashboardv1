@@ -208,7 +208,7 @@ export default {
         remove(index, DataDetail) {
             if (DataDetail.$id != -1) {
                 const id = DataDetail.$id
-                db.deleteDocument('dash1', 'ProductsDetail', id).then(() => {
+                db.deleteDocument('delivered', 'variations', id).then(() => {
                     this.ProductVariation.splice(index, 1)
                 })
             } else {
@@ -217,17 +217,17 @@ export default {
         },
         deleteProductsName() {
             const _id = this.ProductsID
-            db.listDocuments('dash1', 'ProductsDetail', [
+            db.listDocuments('delivered', 'variations', [
                 Query.equal('id_', [_id])
             ]).then((data) => {
                 const rzlt = data.documents
                 rzlt.forEach(element => {
                     const id = element.$id
-                    db.deleteDocument('dash1', 'ProductsDetail', id)
+                    db.deleteDocument('delivered', 'variations', id)
                 });
                 this.ProductsName.splice(this.editedIndex, 1)
                 this.closeDelete()
-                db.deleteDocument('dash1', 'ProductsName', _id).then(() => { })
+                db.deleteDocument('delivered', 'products', _id).then(() => { })
             })
         },
         newProduct() {
@@ -245,7 +245,7 @@ export default {
         },
         saveVariation(index) {
             const element = this.ProductVariation.at(index)
-            db.createDocument('dash1', 'ProductsDetail', 'unique()', {
+            db.createDocument('delivered', 'variations', 'unique()', {
                 Colour: element.Colour,
                 Size: element.Size,
                 Quantity: element.Quantity,
@@ -260,14 +260,14 @@ export default {
 
             if (this.editedIndex > -1) {
                 Object.assign(this.ProductsName[this.editedIndex], this.ProductDetail)
-                db.updateDocument('dash1', 'ProductsName', this.ProductDetail.$id,
+                db.updateDocument('delivered', 'products', this.ProductDetail.$id,
                     { Name: this.ProductDetail.Name });
             } else {
-                db.createDocument('dash1', 'ProductsName', 'unique()', { Name: this.ProductDetail.Name })
+                db.createDocument('delivered', 'products', 'unique()', { Name: this.ProductDetail.Name })
                     .then((data) => {
                         const _id = data.$id
                         this.ProductVariation.forEach(element => {
-                            db.createDocument('dash1', 'ProductsDetail', 'unique()', {
+                            db.createDocument('delivered', 'variations', 'unique()', {
                                 Colour: element.Colour,
                                 Size: element.Size,
                                 Quantity: element.Quantity,
@@ -283,7 +283,7 @@ export default {
             this.close()
         },
         initialize() {
-            db.listDocuments('dash1', 'ProductsName').then((data) => {
+            db.listDocuments('delivered', 'products').then((data) => {
                 this.ProductsName = data.documents
             })
         },
@@ -292,7 +292,7 @@ export default {
             this.editedIndex = this.ProductsName.indexOf(item)
             this.DataDetails = Object.assign({}, item)
             this.ProductVariation = []
-            db.listDocuments('dash1', 'ProductsDetail', [
+            db.listDocuments('delivered', 'variations', [
                 Query.equal('id_', [item.$id])
             ]).then((data) => {
                 const rzlt = data.documents
@@ -315,7 +315,7 @@ export default {
           }, */
         editVariation(DataDetail) {
             console.log(DataDetail)
-            db.updateDocument('dash1', 'ProductsDetail', DataDetail.$id, {
+            db.updateDocument('delivered', 'variations', DataDetail.$id, {
                 Colour: DataDetail.Colour,
                 Size: DataDetail.Size,
                 Quantity: DataDetail.Quantity,
