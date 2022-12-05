@@ -1,12 +1,12 @@
 import { account, db, Query } from "../appwrite"
 
 export const state = () => ({
-    User: null
+    user: null
 })
 
 export const mutations = {
     SET_UserInfo(state, data) {
-        state.User = data
+        state.user = data
     }
 
 }
@@ -15,32 +15,30 @@ export const getters = {
 }
 export const actions = {
 
-
     async onAuthStateChangedAction(state, authUser) {
         
         if (!authUser || !authUser.$id) {
           state.commit('SET_UserInfo', null)
           
-          this.$router.push({
-            path: '/login',
-          })
+          // this.$router.push({
+          //   path: '/login',
+          // })
         } else {
             const data = await db.getDocument('delivered', 'users', authUser.$id)
             const dataDoc = {
-              id: data.$id,
-              email: data.Email,
-              fullname: data.Username,
-              type: data.UserType,
+              email: data.email,
+              username: data.username,
+              role: data.role,
             }
             state.commit('SET_UserInfo', { ...authUser, ...dataDoc })
 
-            this.$router.push({
-                path: '/Orders',
-             })
+            // if(this.$router.currentRoute.path == '/login'){ 
+            //   this.$router.push({
+            //     path: '/orders',
+            //   })
+            // }
           
         }
-      },
-
-
-
+    },
+    
 }

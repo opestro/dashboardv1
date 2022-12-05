@@ -1,10 +1,15 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  // Target: https://go.nuxtjs.dev/config-target
+  target: 'static',
+
+  ssr: false,
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - dashboard-by-heazlly',
-    title: 'dashboard-by-heazlly',
+    titleTemplate: '%s',
+    title: 'la formedable',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -18,6 +23,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '~/assets/style.scss'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -60,7 +66,7 @@ export default {
       dark: true,
       themes: {
         dark: {
-          primary: colors.blue.darken2,
+          primary: '#db1a5a',
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
@@ -75,7 +81,7 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
-  server: {
-    host: '0.0.0.0' // default: localhost
-  },
+  // server: {
+  //   host: '0.0.0.0' // default: localhost
+  // },
 }

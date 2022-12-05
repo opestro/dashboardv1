@@ -384,7 +384,7 @@ export default {
                         "Shiping": this.addfield.Shipping,
                         "Total": this.addfield.Total,
                         "Status": "Processing",
-                        "userID": this.$store.state.auth.user.id,
+                        "userID": this.$store.state.auth.user.$id,
                         "Remarque": this.addfield.Remarque,
                         "Commune": this.addfield.Commune,
                         "Tracking": success.data.tracking
@@ -666,6 +666,5 @@ export default {
     created() {
         this.initialize()
     },
-    middleware: 'auth'
 }
 </script>

@@ -1,26 +1,24 @@
 <template>
   <v-app>
     <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app
-      class="rounded-br-xl ">
-      <v-card class="ma-2 rounded-xl">
+      class="">
+      <v-card v-show="!miniVariant" class="ma-2 rounded-l">
         <v-row class="ma-1">
           <v-col cols="8" class="py-3">
             <div class="text-caption">Welcome Back</div>
             <div class="text-h6">Mahdi H.</div>
           </v-col>
           <v-col cols="4" class="py-3">
-            <v-card max-height="50" max-width="50" class="rounded-circle">
+            <v-card height="50" width="50" class="rounded-1">
 
               <v-card-subtitle class="red  white--text">58</v-card-subtitle>
             </v-card>
-
-
           </v-col>
         </v-row>
       </v-card>
 
 
-      <v-list class="rounded-xl ">
+      <v-list class="">
         <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -31,10 +29,10 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app class="rounded-br-xl  ">
+    <v-app-bar :clipped-left="clipped" fixed app class="">
 
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-app-bar-nav-icon @click.stop="drawer =!drawer" />
+      <v-toolbar-title>{{ $route.path }}</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-icon @click="darkMode">mdi-brightness-4 LOl</v-icon>
@@ -50,7 +48,10 @@
 
     </v-main>
     <v-footer>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <v-spacer></v-spacer>
+      <div> 
+        <span class="mx-2"> la formidable </span> <span> &copy; {{ new Date().getFullYear() }}</span>
+      </div>
     </v-footer>
 
 
@@ -60,6 +61,7 @@
 <script>
 export default {
   name: 'DefaultLayout',
+  middleware: 'auth',
   data() {
     return {
       drawer: false,
@@ -72,26 +74,26 @@ export default {
         {
           icon: 'mdi-account-group',
           title: 'Orders',
-          to: '/Orders'
+          to: '/orders'
         },
         {
           icon: 'mdi-account-plus',
           title: 'Manage Products',
-          to: '/AddProducts'
+          to: '/products'
         },
         {
           icon: 'mdi-account-plus',
-          title: 'Add User',
-          to: '/AddUser'
+          title: 'Manage Users',
+          to: '/users'
         },
         {
           icon: 'mdi-account-plus',
           title: 'Login Page',
-          to: '/LoginPage'
+          to: '/login'
 
         }
       ],
-      title: 'Dashboard heazlly',
+      
 
     }
   },
