@@ -74,7 +74,7 @@
   </template>
 <script>
 
-import { account, db, Query } from "../appwrite";
+import { account, db, Query } from "../appwrite.js";
 export default {
     layout: "auth",
     data() {
@@ -103,6 +103,7 @@ export default {
                             }
 
                             this.$store.commit('auth/SET_UserInfo', userData)
+                            this.$router.push('/')
 
                         })
                         .catch((err) => { 

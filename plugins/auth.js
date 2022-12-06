@@ -1,17 +1,12 @@
-import { account, db, Query } from "../appwrite";
+import { account, db, Query } from "../appwrite.js";
 export default function ({ store, redirect }) {
   // Authentication
-
-
-
-  new Promise(async function (resolve, reject) {
-
-    const userData = await account.get()
+  store.commit('auth/SET_UserInfo', localStorage.getItem('cookieFallback'))
+  account.get().then(userData => { 
     store.dispatch('auth/onAuthStateChangedAction', {...userData})
-
-  })
-
-
+    }).catch(err => {
+      store.commit('auth/SET_UserInfo', null)
+    })
 
 
 }

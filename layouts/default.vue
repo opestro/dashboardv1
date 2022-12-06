@@ -27,6 +27,15 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <v-list-item @click="logout">
+          <v-list-item-action>
+            <v-icon>{{'mdi-exit'}}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title> Logout</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app class="">
@@ -59,6 +68,7 @@
 </template>
 
 <script>
+import { account } from '../appwrite';
 export default {
   name: 'DefaultLayout',
   middleware: 'auth',
@@ -101,7 +111,15 @@ export default {
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       localStorage.setItem("useDarkTheme", this.$vuetify.theme.dark.toString())
-    }
+    },
+    logout(){ 
+
+        localStorage.removeItem('cookieFallback')
+        this.$store.commit('auth/SET_UserInfo', null)
+        this.$router.push('/login')
+
+
+    },
   },
   mounted() {
     const theme = localStorage.getItem("useDarkTheme");

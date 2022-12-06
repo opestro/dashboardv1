@@ -21,7 +21,7 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12">
-                                            <v-text-field v-model="product.Name" :value="product.Name"
+                                            <v-text-field v-model="product.name" :value="product.name"
                                                 label="Product name"></v-text-field>
                                         </v-col>
                                         <v-card-actions class="align-center">
@@ -35,19 +35,19 @@
                                         <v-card outlined class="pa-2 my-2">
                                             <v-row class="align-center ">
                                                 <v-col xs="6">
-                                                    <v-text-field v-model="variation.Colour" label="Colour">
+                                                    <v-text-field v-model="variation.colour" label="Colour">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col>
-                                                    <v-text-field v-model="variation.Size" label="Size">
+                                                    <v-text-field v-model="variation.size" label="Size">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col>
-                                                    <v-text-field v-model="variation.Quantity" label="Quantity">
+                                                    <v-text-field v-model="variation.quantity" label="Quantity">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col>
-                                                    <v-text-field v-model="variation.Price" label="Price">
+                                                    <v-text-field v-model="variation.price" label="Price">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -55,10 +55,9 @@
                                                 <v-col class="d-flex justify-end">
                                                     <div v-if="editedIndex != -1"> 
 
-                                                        <v-chip v-if="variation.$id != -1" class="align-center mr-2" color="blue" outlined>
-                                                            <v-icon small class="" @click="editVariation(variation)">
-                                                                mdi-pencil
-                                                            </v-icon>
+                                                        <v-chip v-if="variation.$id != -1" class="align-center mr-2" color="blue"  outlined 
+                                                            @click="editVariation(variation)" >
+                                                            Edit
                                                         </v-chip>
                                                         <v-chip v-else class="align-center mr-2" color="green" outlined
                                                             @click="saveVariation(index)">
@@ -100,7 +99,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                                <v-btn color="primary" text @click="deleteProduct()">OK</v-btn>
+                                <v-btn color="primary" text @click="deleteProduct()">Delete</v-btn>
                                 <v-spacer></v-spacer>
                             </v-card-actions>
                         </v-card>
@@ -124,6 +123,15 @@
                 </div>
             </template>
         </v-data-table>
+        <v-snackbar v-model="snackbar" :color="snackbarColor">
+        {{ snackbarText }}
+  
+        <template #action="{ attrs }">
+          <v-btn color="" text v-bind="attrs" @click="snackbar = false">
+            close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
 </template>
 <script>
@@ -132,14 +140,17 @@ export default {
     data() {
         return {
             search: '',
+            snackbar:false,
+            snackbarColor:'success',
+            snackbarText:'',
             products: [],
             variations: [],
             product: [{
-                Name: '',
-                Colour: '',
-                Size: '',
-                Quantity: '',
-                Price: '',
+                name: '',
+                colour: '',
+                size: '',
+                quantity: '',
+                price: '',
                 $id: -1
             }],
             dialog: false,
@@ -151,17 +162,17 @@ export default {
                     sortable: false,
                     value: '$id',
                 },
-                { text: 'Product Name', value: 'Name' },
+                { text: 'Product Name', value: 'name' },
                 { text: 'Actions', value: 'actions', sortable: false },
             ],
             editedIndex: -1,
         
             defaultItem: {
-                Name: '',
-                Colour: '',
-                Size: '',
-                Quantity: '',
-                Price: '',
+                name: '',
+                colour: '',
+                size: '',
+                quantity: '',
+                price: '',
                 $id: ''
             },
         }
@@ -186,11 +197,11 @@ export default {
     methods: {
         addMore() {
             this.variations.push({
-                Name: '',
-                Size: '',
-                Colour: '',
-                Quantity: '',
-                Price: '',
+                name: '',
+                size: '',
+                colour: '',
+                quantity: '',
+                price: '',
                 $id: -1
             });
         },
@@ -227,36 +238,56 @@ export default {
         saveVariation(index) {
             const element = this.variations.at(index)
             db.createDocument('delivered', 'variations', 'unique()', {
-                Colour: element.Colour,
-                Size: element.Size,
-                Quantity: element.Quantity,
-                Price: element.Price,
+                colour: element.colour,
+                size: element.size,
+                quantity: element.quantity,
+                price: element.price,
                 productID: this.product.$id
             }).then((data) => {
                 this.variations[index].$id = data.$id    
-            }).catch((err) => { alert(err) })
+            }).catch((err) => { 
+
+                this.snackbar= true
+                this.snackbarColor ='error'
+                this.snackbarText= err
+             })
         },
         createProduct() {
 
             if (this.editedIndex > -1) {
                 Object.assign(this.products[this.editedIndex], this.product)
                 db.updateDocument('delivered', 'products', this.product.$id,
-                    { Name: this.product.Name });
+                    { name: this.product.name }).then(() => { 
+                        this.snackbar= true
+                        this.snackbarColor ='success'
+                        this.snackbarText= 'success'
+                    })
             } else {
-                db.createDocument('delivered', 'products', 'unique()', { Name: this.product.Name })
+                db.createDocument('delivered', 'products', 'unique()', { name: this.product.name })
                     .then((data) => {
                         this.variations.forEach(element => {
                             db.createDocument('delivered', 'variations', 'unique()', {
-                                colour: element.Colour,
-                                size: element.Size,
-                                quantity: element.Quantity,
-                                price: element.Price,
+                                colour: element.colour,
+                                size: element.size,
+                                quantity: element.quantity,
+                                price: element.price,
                                 productID: data.$id
-                            }).catch((err) => { alert(err) })
+                            }).catch((err) => {  
+                                this.snackbar= true
+                                this.snackbarColor ='error'
+                                this.snackbarText= err
+                             })
                         });
                         this.products.push(data)
+                        this.snackbar= true
+                        this.snackbarColor ='success'
+                        this.snackbarText= 'success'
                     })
-                    .catch((err) => { alert(err) });
+                    .catch((err) => { 
+                        this.snackbar= true
+                        this.snackbarColor ='error'
+                        this.snackbarText= err 
+                    });
             }
             this.close()
         },
@@ -271,11 +302,15 @@ export default {
             //  this.product = Object.assign({}, item)
             this.variations = []
             db.listDocuments('delivered', 'variations', [
-                Query.equal('id_', [item.$id])
+                Query.equal('productID', item.$id)
             ]).then((data) => {
-                data.documents.forEach(item => {
-                    this.variations.push(item)
+                data.documents.forEach(variation => {
+                this.variations.push(variation)
                 })
+            }).catch(err => { 
+                this.snackbar= true
+                this.snackbarColor ='error'
+                this.snackbarText= err 
             })
             this.dialog = true
         },
@@ -289,12 +324,20 @@ export default {
     
         editVariation(variation) {
             db.updateDocument('delivered', 'variations', variation.$id, {
-                colour: variation.Colour,
-                size: variation.Size,
-                quantity: variation.Quantity,
-                price: variation.Price,
+                colour: variation.colour,
+                size: variation.size,
+                quantity: variation.quantity,
+                price: variation.price,
                // id_: _id
-            }).catch((err) => { alert(err) })
+            }).then(() => { 
+                this.snackbar= true
+                this.snackbarColor ='success'
+                this.snackbarText= 'success'
+            }).catch((err) => {
+                this.snackbar= true
+                this.snackbarColor ='error'
+                this.snackbarText= err 
+               })
         },
         close() {
             this.dialog = false,
