@@ -3,12 +3,12 @@
         <v-data-table :headers="headers" :items="products" :search="search" class="elevation-1 rounded-xl">
             <template v-slot:top>
                 <v-toolbar flat class="">
-                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search"  hide-details>
+                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" hide-details>
                     </v-text-field>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" dark class="mb-2" @click="newProduct()">
-                      + Create Product
+                        + Create Product
                     </v-btn>
                     <v-dialog v-model="dialog" max-width="500px" content-class=" rounded-xl">
                         <template v-slot:activator="{ on, attrs }">
@@ -20,9 +20,15 @@
                             <v-card-text>
                                 <v-container>
                                     <v-row>
-                                        <v-col cols="12">
+                                        <v-col cols="6">
                                             <v-text-field v-model="product.name" :value="product.name"
                                                 label="Product name"></v-text-field>
+
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-file-input accept="image/png, image/jpeg, image/bmp"
+                                                prepend-icon="mdi-camera" show-size v-model="product.img"
+                                                placeholder="Product picture" truncate-length="10"></v-file-input>
                                         </v-col>
                                         <v-card-actions class="align-center">
                                             <v-btn color="primary" text @click="addMore()">
@@ -53,10 +59,10 @@
                                             </v-row>
                                             <v-row class="align-center mb-3 ">
                                                 <v-col class="d-flex justify-end">
-                                                    <div v-if="editedIndex != -1"> 
+                                                    <div v-if="editedIndex != -1">
 
-                                                        <v-chip v-if="variation.$id != -1" class="align-center mr-2" color="blue"  outlined 
-                                                            @click="editVariation(variation)" >
+                                                        <v-chip v-if="variation.$id != -1" class="align-center mr-2"
+                                                            color="blue" outlined @click="editVariation(variation)">
                                                             Edit
                                                         </v-chip>
                                                         <v-chip v-else class="align-center mr-2" color="green" outlined
@@ -76,7 +82,7 @@
                                     </div>
                                     <!--==== End of Edit Variation ====-->
                                     <!--==== Add Variation ====-->
-                                    
+
                                     <!--==== End of Add Variation ====-->
                                 </v-container>
                             </v-card-text>
@@ -85,14 +91,14 @@
                                 <v-btn color="blue darken-1" text @click="close">
                                     Cancel
                                 </v-btn>
-                                <v-btn  color="primary" text @click="createProduct()">
-                                    {{(editedIndex != -1)?'Update':'Create'}}
+                                <v-btn color="primary" text @click="createProduct(product.img)">
+                                    {{ (editedIndex != -1) ? 'Update' : 'Create' }}
                                 </v-btn>
-                              
+
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
-                   
+
                     <v-dialog v-model="dialogDelete" max-width="500px" content-class=" rounded-xl">
                         <v-card>
                             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -115,7 +121,7 @@
                 </v-icon>
             </template>
             <template v-slot:no-data>
-                <div class=""> 
+                <div class="">
                     <v-img class="mx-auto" width="300" height="200" :src="require('@/assets/images/empty.svg')"></v-img>
                     <v-btn class="mx-auto my-2" color="" outlined @click="newProduct()">
                         Create Product
@@ -124,30 +130,31 @@
             </template>
         </v-data-table>
         <v-snackbar v-model="snackbar" :color="snackbarColor">
-        {{ snackbarText }}
-  
-        <template #action="{ attrs }">
-          <v-btn color="" text v-bind="attrs" @click="snackbar = false">
-            close
-          </v-btn>
-        </template>
-      </v-snackbar>
+            {{ snackbarText }}
+
+            <template #action="{ attrs }">
+                <v-btn color="" text v-bind="attrs" @click="snackbar = false">
+                    close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 <script>
-import { db, Query, ID } from "../appwrite.js"
+import { db, Query, ID, storage } from "../appwrite.js"
 export default {
     data() {
         return {
             search: '',
-            snackbar:false,
-            snackbarColor:'success',
-            snackbarText:'',
+            snackbar: false,
+            snackbarColor: 'success',
+            snackbarText: '',
             products: [],
             variations: [],
             product: [{
                 name: '',
                 colour: '',
+                img: null,
                 size: '',
                 quantity: '',
                 price: '',
@@ -166,10 +173,11 @@ export default {
                 { text: 'Actions', value: 'actions', sortable: false },
             ],
             editedIndex: -1,
-        
+
             defaultItem: {
                 name: '',
                 colour: '',
+                img: '',
                 size: '',
                 quantity: '',
                 price: '',
@@ -189,7 +197,7 @@ export default {
         dialogDelete(val) {
             val || this.closeDelete()
         },
-       
+
     },
     created() {
         this.initialize()
@@ -225,7 +233,7 @@ export default {
                 });
                 this.products.splice(this.editedIndex, 1)
                 this.closeDelete()
-                db.deleteDocument('delivered', 'products', this.ProductID).then(() => { 
+                db.deleteDocument('delivered', 'products', this.ProductID).then(() => {
 
                 })
             })
@@ -244,52 +252,93 @@ export default {
                 price: element.price,
                 productID: this.product.$id
             }).then((data) => {
-                this.variations[index].$id = data.$id    
-            }).catch((err) => { 
+                this.variations[index].$id = data.$id
+            }).catch((err) => {
 
-                this.snackbar= true
-                this.snackbarColor ='error'
-                this.snackbarText= err
-             })
+                this.snackbar = true
+                this.snackbarColor = 'error'
+                this.snackbarText = err
+            })
         },
         createProduct() {
-
+            const productImg = this.product.img
+            const productName = this.product.name
             if (this.editedIndex > -1) {
                 Object.assign(this.products[this.editedIndex], this.product)
                 db.updateDocument('delivered', 'products', this.product.$id,
-                    { name: this.product.name }).then(() => { 
-                        this.snackbar= true
-                        this.snackbarColor ='success'
-                        this.snackbarText= 'success'
+                    { name: this.product.name }).then(() => {
+                        this.snackbar = true
+                        this.snackbarColor = 'success'
+                        this.snackbarText = 'success'
                     })
             } else {
-                db.createDocument('delivered', 'products', 'unique()', { name: this.product.name })
-                    .then((data) => {
-                        this.variations.forEach(element => {
-                            db.createDocument('delivered', 'variations', 'unique()', {
-                                colour: element.colour,
-                                size: element.size,
-                                quantity: element.quantity,
-                                price: element.price,
-                                productID: data.$id
-                            }).catch((err) => {  
-                                this.snackbar= true
-                                this.snackbarColor ='error'
-                                this.snackbarText= err
-                             })
+
+                // Check if user upload a picture or not
+                if (this.product.img == null) {
+                    db.createDocument('delivered', 'products', 'unique()', { name: productName })
+                        .then((data) => {
+                            console.log('image = null :(')
+                            this.variations.forEach(element => {
+                                db.createDocument('delivered', 'variations', 'unique()', {
+                                    colour: element.colour,
+                                    size: element.size,
+                                    quantity: element.quantity,
+                                    price: element.price,
+                                    productID: data.$id
+                                }).catch((err) => {
+                                    this.snackbar = true
+                                    this.snackbarColor = 'error'
+                                    this.snackbarText = err
+                                })
+                            });
+                            this.products.push(data)
+                            this.snackbar = true
+                            this.snackbarColor = 'success'
+                            this.snackbarText = 'success'
+                        }).catch((err) => {
+                            this.snackbar = true
+                            this.snackbarColor = 'error'
+                            this.snackbarText = err
                         });
-                        this.products.push(data)
-                        this.snackbar= true
-                        this.snackbarColor ='success'
-                        this.snackbarText= 'success'
-                    })
-                    .catch((err) => { 
-                        this.snackbar= true
-                        this.snackbarColor ='error'
-                        this.snackbarText= err 
-                    });
+
+                } else {
+                    storage.createFile('productsimg', 'unique()', productImg)
+                        .then((imgData) => {
+                            const imageId = imgData.$id
+                            db.createDocument('delivered', 'products', 'unique()', {
+                                name: productName,
+                                imageID: imageId
+                            }).then((data) => {
+                                console.log('theres an image')
+                                console.log(data)
+                                this.variations.forEach(element => {
+                                    db.createDocument('delivered', 'variations', 'unique()', {
+                                        colour: element.colour,
+                                        size: element.size,
+                                        quantity: element.quantity,
+                                        price: element.price,
+                                        productID: data.$id
+                                    }).catch((err) => {
+                                        this.snackbar = true
+                                        this.snackbarColor = 'error'
+                                        this.snackbarText = err
+                                    })
+                                })
+                                this.products.push(data)
+                                this.snackbar = true
+                                this.snackbarColor = 'success'
+                                this.snackbarText = 'success'
+
+                            }).catch((err) => {
+                                this.snackbar = true
+                                this.snackbarColor = 'error'
+                                this.snackbarText = err
+                            })
+
+                        })
+                }
+                this.close()
             }
-            this.close()
         },
         initialize() {
             db.listDocuments('delivered', 'products').then((data) => {
@@ -305,12 +354,12 @@ export default {
                 Query.equal('productID', item.$id)
             ]).then((data) => {
                 data.documents.forEach(variation => {
-                this.variations.push(variation)
+                    this.variations.push(variation)
                 })
-            }).catch(err => { 
-                this.snackbar= true
-                this.snackbarColor ='error'
-                this.snackbarText= err 
+            }).catch(err => {
+                this.snackbar = true
+                this.snackbarColor = 'error'
+                this.snackbarText = err
             })
             this.dialog = true
         },
@@ -318,26 +367,26 @@ export default {
         deleteItem(item) {
             this.ProductID = item.$id
             this.editedIndex = this.products.indexOf(item)
-           // this.DataDetails = Object.assign({}, item)
+            // this.DataDetails = Object.assign({}, item)
             this.dialogDelete = true
         },
-    
+
         editVariation(variation) {
             db.updateDocument('delivered', 'variations', variation.$id, {
                 colour: variation.colour,
                 size: variation.size,
                 quantity: variation.quantity,
                 price: variation.price,
-               // id_: _id
-            }).then(() => { 
-                this.snackbar= true
-                this.snackbarColor ='success'
-                this.snackbarText= 'success'
+                // id_: _id
+            }).then(() => {
+                this.snackbar = true
+                this.snackbarColor = 'success'
+                this.snackbarText = 'success'
             }).catch((err) => {
-                this.snackbar= true
-                this.snackbarColor ='error'
-                this.snackbarText= err 
-               })
+                this.snackbar = true
+                this.snackbarColor = 'error'
+                this.snackbarText = err
+            })
         },
         close() {
             this.dialog = false,
@@ -353,7 +402,7 @@ export default {
                     this.editedIndex = -1
                 })
         },
-      
+
     },
 }
 </script>
