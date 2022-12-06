@@ -28,7 +28,7 @@
                                         <v-col cols="6">
                                             <v-file-input accept="image/png, image/jpeg, image/bmp"
                                                 prepend-icon="mdi-camera" show-size v-model="product.img"
-                                                placeholder="Product picture" truncate-length="10"></v-file-input>
+                                                placeholder="Product picture" truncate-length="5"></v-file-input>
                                         </v-col>
                                         <v-card-actions class="align-center">
                                             <v-btn color="primary" text @click="addMore()">
@@ -260,83 +260,58 @@ export default {
                 this.snackbarText = err
             })
         },
-        createProduct() {
-            const productImg = this.product.img
-            const productName = this.product.name
+        async createProduct() {
             if (this.editedIndex > -1) {
                 Object.assign(this.products[this.editedIndex], this.product)
-                db.updateDocument('delivered', 'products', this.product.$id,
-                    { name: this.product.name }).then(() => {
-                        this.snackbar = true
-                        this.snackbarColor = 'success'
-                        this.snackbarText = 'success'
-                    })
-            } else {
+                const imageId = await storage.createFile('productsimg', 'unique()', this.product.img)
+                storage.updateFile('delivered', 'products', this.product.imageID).then(() =>{
+                    db.updateDocument('delivered', 'products', this.product.$id, {
+                    name: this.product.name,
+                    imageID: imageId
+                }).then(() => {
+                   
+                    this.snackbar = true
+                    this.snackbarColor = 'success'
+                    this.snackbarText = 'success'
+                })
+                })
 
-                // Check if user upload a picture or not
-                if (this.product.img == null) {
-                    db.createDocument('delivered', 'products', 'unique()', { name: productName })
-                        .then((data) => {
-                            console.log('image = null :(')
-                            this.variations.forEach(element => {
-                                db.createDocument('delivered', 'variations', 'unique()', {
-                                    colour: element.colour,
-                                    size: element.size,
-                                    quantity: element.quantity,
-                                    price: element.price,
-                                    productID: data.$id
-                                }).catch((err) => {
-                                    this.snackbar = true
-                                    this.snackbarColor = 'error'
-                                    this.snackbarText = err
-                                })
-                            });
-                            this.products.push(data)
-                            this.snackbar = true
-                            this.snackbarColor = 'success'
-                            this.snackbarText = 'success'
+            } else {
+                let imageId = null
+                if (this.product.img) {
+                   await storage.createFile('productsimg', 'unique()', this.product.img).then((data)=>{
+                     imageId = data.$id
+                    })
+                } 
+                console.log(imageId)
+                db.createDocument('delivered', 'products', 'unique()', {
+                    name: this.product.name,
+                    imageID: imageId
+                }).then((data) => {
+                    console.log(data)
+                    this.variations.forEach(element => {
+                        db.createDocument('delivered', 'variations', 'unique()', {
+                            colour: element.colour,
+                            size: element.size,
+                            quantity: element.quantity,
+                            price: element.price,
+                            productID: data.$id
                         }).catch((err) => {
                             this.snackbar = true
                             this.snackbarColor = 'error'
                             this.snackbarText = err
-                        });
-
-                } else {
-                    storage.createFile('productsimg', 'unique()', productImg)
-                        .then((imgData) => {
-                            const imageId = imgData.$id
-                            db.createDocument('delivered', 'products', 'unique()', {
-                                name: productName,
-                                imageID: imageId
-                            }).then((data) => {
-                                console.log('theres an image')
-                                console.log(data)
-                                this.variations.forEach(element => {
-                                    db.createDocument('delivered', 'variations', 'unique()', {
-                                        colour: element.colour,
-                                        size: element.size,
-                                        quantity: element.quantity,
-                                        price: element.price,
-                                        productID: data.$id
-                                    }).catch((err) => {
-                                        this.snackbar = true
-                                        this.snackbarColor = 'error'
-                                        this.snackbarText = err
-                                    })
-                                })
-                                this.products.push(data)
-                                this.snackbar = true
-                                this.snackbarColor = 'success'
-                                this.snackbarText = 'success'
-
-                            }).catch((err) => {
-                                this.snackbar = true
-                                this.snackbarColor = 'error'
-                                this.snackbarText = err
-                            })
-
                         })
-                }
+                    })
+                    this.products.push(data)
+                    this.snackbar = true
+                    this.snackbarColor = 'success'
+                    this.snackbarText = 'success'
+
+                }).catch((err) => {
+                    this.snackbar = true
+                    this.snackbarColor = 'error'
+                    this.snackbarText = err
+                })
                 this.close()
             }
         },
